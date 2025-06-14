@@ -83,21 +83,52 @@ def text_to_speech(conversation, output_file='podcast.mp3'):
     
     print(f"Audio generation complete!")
 
-def use_system_say(conversation):
+def use_system_say(conversation, output_file='podcast.aiff'):
     """Fallback using macOS 'say' command"""
     import subprocess
+    import os
+    
+    # Create temporary files for each line
+    temp_files = []
     
     for i, (speaker, text) in enumerate(conversation):
         print(f"Processing: {speaker}: {text[:50]}...")
         
         # Use different voices for different speakers
-        voice = 'Alex' if speaker == 'ALEX' else 'Samantha'
+        # Daniel has a British accent (male), Samantha is American (female)
+        voice = 'Daniel' if speaker == 'ALEX' else 'Samantha'
         
         # Escape quotes in text
-        escaped_text = text.replace('"', '\\"')
+        escaped_text = text.replace('"', '\\"').replace('$', '\\$').replace('`', '\\`')
         
-        # Use the macOS 'say' command
-        subprocess.run(['say', '-v', voice, escaped_text])
+        # Create temp filename
+        temp_file = f'temp_{i}.aiff'
+        temp_files.append(temp_file)
+        
+        # Use the macOS 'say' command to save to file
+        subprocess.run(['say', '-v', voice, '-o', temp_file, escaped_text])
+    
+    # Combine all temp files into one
+    if temp_files:
+        print("Combining audio files...")
+        # Convert list of files to format needed by 'cat' command
+        subprocess.run(['cat'] + temp_files + ['>', output_file], shell=True)
+        
+        # Clean up temp files
+        for temp_file in temp_files:
+            os.remove(temp_file)
+        
+        print(f"Audio saved to {output_file}")
+        
+        # Convert to MP3 if ffmpeg is available
+        try:
+            mp3_file = output_file.replace('.aiff', '.mp3')
+            subprocess.run(['ffmpeg', '-i', output_file, '-acodec', 'mp3', '-ab', '192k', mp3_file], 
+                         capture_output=True)
+            os.remove(output_file)
+            print(f"Converted to MP3: {mp3_file}")
+        except:
+            print(f"Audio saved as AIFF format: {output_file}")
     
     print(f"Audio generation complete!")
 
