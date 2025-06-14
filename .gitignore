@@ -1,0 +1,7 @@
+*.mp3
+*.wav
+temp_*
+__pycache__/
+*.pyc
+.venv/
+convo-env/
