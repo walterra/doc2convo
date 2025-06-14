@@ -42,11 +42,16 @@ def setup_voices(engine):
 def text_to_speech(conversation, output_file='podcast.mp3'):
     """Convert conversation to speech with different voices"""
     try:
-        # Try to initialize with the correct driver for macOS
-        engine = pyttsx3.init('nsss')
+        # Try to initialize with dummy driver as workaround for macOS
+        engine = pyttsx3.init('dummy')
     except:
-        # Fallback to default driver
-        engine = pyttsx3.init()
+        try:
+            # Fallback to default driver
+            engine = pyttsx3.init()
+        except:
+            print("Error: Could not initialize text-to-speech engine")
+            print("Consider using edge_tts_converter.py instead for better compatibility")
+            return
     
     # Configure voice properties
     engine.setProperty('rate', 175)  # Speed of speech
