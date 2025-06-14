@@ -31,7 +31,7 @@ def parse_conversation(markdown_file):
 
 async def generate_speech(text, voice, output_file):
     """Generate speech for a single line"""
-    communicate = edge_tts.Communicate(text, voice)
+    communicate = edge_tts.Communicate(text, voice, rate='+25%')
     await communicate.save(output_file)
 
 async def create_podcast(conversation, output_file='podcast.mp3'):
@@ -55,7 +55,7 @@ async def create_podcast(conversation, output_file='podcast.mp3'):
     for temp_file in temp_files:
         audio = AudioSegment.from_mp3(temp_file)
         # Add small pause between lines
-        combined += audio + AudioSegment.silent(duration=300)
+        combined += audio # + AudioSegment.silent(duration=1)
     
     # Export final audio
     combined.export(output_file, format="mp3")
