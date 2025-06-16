@@ -1,0 +1,5 @@
+edge-tts==6.1.9
+pydub==0.25.1
+anthropic>=0.54.0
+requests>=2.32.0
+beautifulsoup4>=4.13.0
