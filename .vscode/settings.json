@@ -12,6 +12,14 @@
             "source.organizeImports": "explicit"
         }
     },
+    "emeraldwalk.runonsave": {
+        "commands": [
+            {
+                "match": "\\.py$",
+                "cmd": "${workspaceFolder}/convo-env/bin/python ${workspaceFolder}/scripts/add_license_header.py ${file}"
+            }
+        ]
+    },
     "black-formatter.args": ["--line-length=88"],
     "isort.args": ["--profile", "black"],
     "flake8.args": ["--max-line-length=88", "--extend-ignore=E203,W503,E501"],
