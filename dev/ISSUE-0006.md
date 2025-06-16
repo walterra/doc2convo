@@ -351,7 +351,7 @@ def migrate_code():
     migrations = {
         "edge_tts_converter.py": "tts/edge.py",
         "text_to_speech.py": "tts/pyttsx3.py",
-        "url2convo.py": "web/fetcher.py",
+        "doc2md-convo.py": "web/fetcher.py",
         "url_to_convo.py": "web/extractor.py",
     }
     

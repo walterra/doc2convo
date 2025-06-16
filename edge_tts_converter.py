@@ -128,7 +128,7 @@ def get_output_filename(input_file):
 async def main():
     parser = argparse.ArgumentParser(
         description="Convert conversation markdown to audio podcast",
-        epilog='Use "-" as input to read from stdin. Example: python url2convo.py URL | python edge_tts_converter.py - -o output.mp3',
+        epilog='Use "-" as input to read from stdin. Example: python doc2md-convo.py URL | python edge_tts_converter.py - -o output.mp3',
     )
     parser.add_argument(
         "input",

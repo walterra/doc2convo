@@ -5,7 +5,7 @@
 
 
 """
-url2convo: URL/File to Conversation Generator
+doc2md-convo: Document/URL to Conversation Markdown Generator
 Uses Claude SDK to convert web content or local files into conversational podcast format
 Supports URLs, .txt, .md, and .pdf files
 """

@@ -17,7 +17,7 @@ The current codebase has minimal to no error handling. File operations, network 
 
 - `edge_tts_converter.py` - No error handling for TTS operations
 - `text_to_speech.py` - No error handling for pyttsx3 operations
-- `url2convo.py` - Basic error handling but no proper exceptions
+- `doc2md-convo.py` - Basic error handling but no proper exceptions
 
 ## Requirements
 

@@ -14,7 +14,7 @@ This project shows promise as a useful tool for converting web content to conver
 ### 1. Security Vulnerabilities
 
 - **Command Injection Risk**: `edge_tts_converter.py:23-25` uses `os.system()` with user input, vulnerable to command injection
-- **Unsafe HTML Parsing**: No input sanitization in `url2convo.py` when parsing web content
+- **Unsafe HTML Parsing**: No input sanitization in `doc2md-convo.py` when parsing web content
 - **API Key Exposure**: No guidance on secure API key management beyond environment variables
 - **Temporary File Vulnerabilities**: Predictable temp file names could be exploited
 
@@ -166,7 +166,7 @@ This project shows promise as a useful tool for converting web content to conver
 
 ### Specific Code Issues
 
-**url2convo.py:49-96**
+**doc2md-convo.py:49-96**
 
 ```python
 # Current - No error handling

@@ -28,13 +28,13 @@ pip install -r requirements.txt
 # For development tools (optional)
 pip install -r requirements-dev.txt
 
-# Set your Anthropic API key (for url2convo.py)
+# Set your Anthropic API key (for doc2md-convo.py)
 export ANTHROPIC_API_KEY='your-api-key-here'
 ```
 
 ## Complete Workflow: Web to Audio
 
-The project includes `url2convo.py` which fetches web content or processes local files and generates conversational podcasts using Claude AI.
+The project includes `doc2md-convo.py` which fetches web content or processes local files and generates conversational podcasts using Claude AI.
 
 ### Supported Input Types
 
@@ -47,16 +47,16 @@ The project includes `url2convo.py` which fetches web content or processes local
 
 ```bash
 # Direct piping from URL to audio
-python3 url2convo.py https://walterra.dev | python3 edge_tts_converter.py - -o walterra-dev.mp3
+python3 doc2md-convo.py https://walterra.dev | python3 edge_tts_converter.py - -o walterra-dev.mp3
 
 # From local text file
-python3 url2convo.py document.txt | python3 edge_tts_converter.py - -o document-podcast.mp3
+python3 doc2md-convo.py document.txt | python3 edge_tts_converter.py - -o document-podcast.mp3
 
 # From PDF file
-python3 url2convo.py report.pdf | python3 edge_tts_converter.py - -o report-podcast.mp3
+python3 doc2md-convo.py report.pdf | python3 edge_tts_converter.py - -o report-podcast.mp3
 
 # With custom style/personality
-python3 url2convo.py document.md -s "Make it humorous with tech jokes" | python3 edge_tts_converter.py -
+python3 doc2md-convo.py document.md -s "Make it humorous with tech jokes" | python3 edge_tts_converter.py -
 ```
 
 ### Step-by-Step Usage
@@ -65,22 +65,22 @@ python3 url2convo.py document.md -s "Make it humorous with tech jokes" | python3
 
    ```bash
    # From URL - output to file
-   python3 url2convo.py https://walterra.dev -o WALTERRA-DEV-CONVO.md
+   python3 doc2md-convo.py https://walterra.dev -o WALTERRA-DEV-CONVO.md
 
    # From local text file
-   python3 url2convo.py document.txt -o DOCUMENT-CONVO.md
+   python3 doc2md-convo.py document.txt -o DOCUMENT-CONVO.md
 
    # From markdown file
-   python3 url2convo.py README.md -o README-CONVO.md
+   python3 doc2md-convo.py README.md -o README-CONVO.md
 
    # From PDF file
-   python3 url2convo.py report.pdf -o REPORT-CONVO.md
+   python3 doc2md-convo.py report.pdf -o REPORT-CONVO.md
 
    # Output to stdout (for piping)
-   python3 url2convo.py document.txt
+   python3 doc2md-convo.py document.txt
 
    # With custom system prompt
-   python3 url2convo.py document.md -s "Make it humorous with tech jokes"
+   python3 doc2md-convo.py document.md -s "Make it humorous with tech jokes"
    ```
 
 2. **Convert conversation to audio**
@@ -98,7 +98,7 @@ python3 url2convo.py document.md -s "Make it humorous with tech jokes" | python3
 
 ## How it works
 
-1. **url2convo.py**:
+1. **doc2md-convo.py**:
    - For URLs: Fetches web content, cleans HTML, and uses Claude to generate a natural conversation
    - For local files: Reads content from .txt, .md, or .pdf files and processes with Claude
 2. **edge_tts_converter.py**: Parses conversation markdown (format: `**SPEAKER:** text`)
@@ -129,34 +129,34 @@ You can modify the voices in `edge_tts_converter.py` by changing the voice names
 
 ### Conversation Style
 
-Use the `--system-prompt`/`-s` flag with url2convo.py to influence the conversation:
+Use the `--system-prompt`/`-s` flag with doc2md-convo.py to influence the conversation:
 
 ```bash
 # Make it educational
-python3 url2convo.py https://walterra.dev -s "Explain concepts like teaching to beginners"
+python3 doc2md-convo.py https://walterra.dev -s "Explain concepts like teaching to beginners"
 
 # Add humor
-python3 url2convo.py https://walterra.dev -s "Include tech jokes and puns"
+python3 doc2md-convo.py https://walterra.dev -s "Include tech jokes and puns"
 
 # Focus on specific aspects
-python3 url2convo.py https://walterra.dev -s "Focus on the technical implementation details"
+python3 doc2md-convo.py https://walterra.dev -s "Focus on the technical implementation details"
 ```
 
 ## Examples
 
 ```bash
 # Convert a blog post to podcast
-python3 url2convo.py https://walterra.dev/blog/2025-05-16-html-to-image-rendering-server | python3 edge_tts_converter.py - -o node-html2img-render-server-podcast.mp3
+python3 doc2md-convo.py https://walterra.dev/blog/2025-05-16-html-to-image-rendering-server | python3 edge_tts_converter.py - -o node-html2img-render-server-podcast.mp3
 
 # Convert local documentation to podcast
-python3 url2convo.py README.md | python3 edge_tts_converter.py - -o readme-podcast.mp3
+python3 doc2md-convo.py README.md | python3 edge_tts_converter.py - -o readme-podcast.mp3
 
 # Process a research paper PDF
-python3 url2convo.py research-paper.pdf -s "Explain like teaching to graduate students" -o RESEARCH-CONVO.md
+python3 doc2md-convo.py research-paper.pdf -s "Explain like teaching to graduate students" -o RESEARCH-CONVO.md
 python3 edge_tts_converter.py RESEARCH-CONVO.md -o research-podcast.mp3
 
 # Create a funny tech news summary from URL
-python3 url2convo.py https://techcrunch.com/2025/06/04/elon-musks-introduction-to-politics/ -s "Make it a roasting comedy show" -o ROAST-CONVO.md
+python3 doc2md-convo.py https://techcrunch.com/2025/06/04/elon-musks-introduction-to-politics/ -s "Make it a roasting comedy show" -o ROAST-CONVO.md
 python3 edge_tts_converter.py ROAST-CONVO.md
 ```
 

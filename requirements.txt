@@ -2,7 +2,7 @@
 edge-tts==6.1.9
 pydub==0.25.1
 
-# Dependencies for url2convo (AI conversation generation)
+# Dependencies for doc2md-convo (AI conversation generation)
 anthropic>=0.54.0
 requests>=2.32.0
 beautifulsoup4>=4.13.0

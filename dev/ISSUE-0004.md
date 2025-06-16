@@ -7,7 +7,7 @@
 ## Problem
 
 The codebase lacks input validation and sanitization, particularly in:
-- HTML content parsing in `url2convo.py` (potential XSS if output is ever rendered)
+- HTML content parsing in `doc2md-convo.py` (potential XSS if output is ever rendered)
 - File path handling (potential directory traversal)
 - URL validation (could fetch malicious content)
 - Speaker name parsing (injection into TTS commands)
@@ -181,7 +181,7 @@ def sanitize_text_for_tts(text: str) -> str:
     return text
 ```
 
-### Step 2: Update url2convo.py with Validation
+### Step 2: Update doc2md-convo.py with Validation
 
 ```python
 from validators import validate_url, sanitize_html, ValidationError
