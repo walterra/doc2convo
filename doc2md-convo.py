@@ -125,7 +125,7 @@ def generate_conversation(title, content, source, system_prompt=None):
     # Add custom system prompt if provided
     system_prompt_section = ""
     if system_prompt:
-        system_prompt_section = f"{system_prompt}\n\n"
+        system_prompt_section = f"IMPORTANT: The following additional instructions should be considered with HIGH PRIORITY and can override any of the default requirements. The custom instructions take precedence over the defaults.\n\nBEGIN OF HIGH PRIORITY INSTRUCTIONS\n\n{system_prompt}\n\nEND OF HIGH PRIORITY INSTRUCTIONS\n\n"
 
     # Randomize role assignment to avoid gender bias
     if random.choice([True, False]):
