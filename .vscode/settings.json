@@ -1,0 +1,26 @@
+{
+    "python.defaultInterpreterPath": "./convo-env/bin/python",
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit"
+    },
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        }
+    },
+    "black-formatter.args": ["--line-length=88"],
+    "isort.args": ["--profile", "black"],
+    "flake8.args": ["--max-line-length=88", "--extend-ignore=E203,W503,E501"],
+    "files.exclude": {
+        "**/.git": true,
+        "**/.DS_Store": true,
+        "**/node_modules": true,
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/convo-env": true
+    }
+}
