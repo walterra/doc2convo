@@ -1,4 +1,4 @@
-# Conversation to Audio Converter
+# doc2convo
 
 This project converts markdown-formatted conversations into audio podcasts with distinct voices for each speaker. It includes tools to generate conversations from web content and convert them to audio.
 

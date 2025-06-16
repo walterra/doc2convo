@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Python-based conversation-to-audio converter that transforms markdown-formatted conversations into audio podcasts with distinct voices for each speaker. The project provides two implementations:
+doc2convo is a Python-based conversation-to-audio converter that transforms markdown-formatted conversations into audio podcasts with distinct voices for each speaker. The project provides two implementations:
 - `text_to_speech.py` - Offline TTS using pyttsx3
 - `edge_tts_converter.py` - Online TTS using Microsoft Edge's neural voices
 
