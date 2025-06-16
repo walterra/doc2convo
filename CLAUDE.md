@@ -4,43 +4,91 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-doc2convo is a Python-based conversation-to-audio converter that transforms markdown-formatted conversations into audio podcasts with distinct voices for each speaker using Microsoft Edge's neural voices via `edge_tts_converter.py`.
+doc2convo is a Python tool that converts web content and documents into conversational audio podcasts. It consists of two main components:
+- `url2convo.py` - Fetches content from URLs or local files and generates natural conversations using Claude AI
+- `edge_tts_converter.py` - Converts conversation markdown to audio using Microsoft Edge's neural voices
 
 ## Development Commands
 
-### Setup and Run
+### Setup Virtual Environment
 ```bash
-pip install -r requirements-edge.txt
-python edge_tts_converter.py
+python3 -m venv convo-env
+source ./convo-env/bin/activate
 ```
 
-### Testing Changes
-Since there are no automated tests, manually verify:
-1. Ensure `DAILY-CONVO.md` exists with proper format: `**SPEAKER:** text`
-2. Run the script and check output
-3. For edge-tts version, verify `podcast.mp3` is created
+### Install Dependencies
+```bash
+# For edge-tts only
+pip install -r requirements-edge.txt
+
+# For full workflow (includes Anthropic SDK)
+pip install -r requirements-url2convo.txt
+
+# For development tools
+pip install -r requirements-dev.txt
+```
+
+### Code Quality Commands
+```bash
+# Format code
+python scripts/format_python.py
+
+# Check license headers
+python scripts/check_license_header.py
+
+# Add missing license headers
+python scripts/add_license_header.py
+
+# Run linting
+flake8 .
+
+# Type checking
+mypy edge_tts_converter.py url2convo.py
+```
+
+### Running the Tools
+```bash
+# Set API key for url2convo
+export ANTHROPIC_API_KEY='your-api-key-here'
+
+# Generate conversation from URL/file
+python3 url2convo.py https://example.com -o OUTPUT-CONVO.md
+python3 url2convo.py document.pdf -s "Make it humorous"
+
+# Convert to audio
+python3 edge_tts_converter.py INPUT-CONVO.md -o output.mp3
+
+# Direct piping workflow
+python3 url2convo.py URL | python3 edge_tts_converter.py - -o podcast.mp3
+```
 
 ## Code Architecture
 
-### Core Components
-1. **Conversation Parser** (`parse_conversation()` in edge_tts_converter.py)
-   - Regex pattern: `r'\*\*([A-Z]+):\*\* (.+)'`
-   - Returns list of (speaker, text) tuples
+### Core Workflow
+The project implements a pipeline: Content Source → AI Conversation → Neural TTS Audio
 
-2. **Voice Mapping**
-   - ALEX: Male voice (Christopher in edge-tts)
-   - JORDAN: Female voice (Jenny in edge-tts)
+1. **Content Ingestion** (`url2convo.py`)
+   - Accepts URLs (via requests + BeautifulSoup for HTML cleaning)
+   - Processes local files: .txt, .md, .pdf (via PyPDF2)
+   - Uses Anthropic Claude to generate natural dialogues between ALEX and JORDAN
+   - Supports custom system prompts to influence conversation style
 
-3. **Audio Processing**
-   - Generates temporary MP3s, combines with 300ms pauses, outputs to `podcast.mp3`
+2. **Audio Generation** (`edge_tts_converter.py`)
+   - Parses markdown conversations (format: `**SPEAKER:** text`)
+   - Maps speakers to voices: ALEX → ChristopherNeural, JORDAN → JennyNeural
+   - Implements async TTS generation with edge-tts
+   - Combines audio segments with 300ms pauses between turns
+   - Supports both file input and stdin for piping
 
 ### Key Implementation Details
-- Input file hardcoded as `DAILY-CONVO.md`
-- Output file hardcoded as `podcast.mp3`
-- edge_tts_converter.py uses async/await pattern
-- Temporary files cleaned up automatically
+- All Python files must include MIT license header (enforced by scripts/)
+- Code formatting: Black with 88-char line length + isort
+- Conversation regex pattern: `r'\*\*([A-Z]+):\*\* (.+)'`
+- Speech rate increased by 25% for natural flow
+- Temporary audio files cleaned up automatically
+- Output filenames auto-generated from source when using stdin
 
-### Important Notes
-- No error handling for missing files or TTS failures
-- edge-tts requires internet connection
-- Unknown speakers default to ALEX's voice
+### Project Configuration
+- `pyproject.toml` - Configures Black, isort, flake8, and mypy settings
+- Development issues tracked in `dev/ISSUE-*.md` files
+- No automated tests - manual verification required
