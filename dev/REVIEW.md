@@ -13,7 +13,7 @@ This project shows promise as a useful tool for converting web content to conver
 
 ### 1. Security Vulnerabilities
 
-- **Command Injection Risk**: `edge_tts_converter.py:23-25` uses `os.system()` with user input, vulnerable to command injection
+- **Command Injection Risk**: `md-convo2mp3.py:23-25` uses `os.system()` with user input, vulnerable to command injection
 - **Unsafe HTML Parsing**: No input sanitization in `doc2md-convo.py` when parsing web content
 - **API Key Exposure**: No guidance on secure API key management beyond environment variables
 - **Temporary File Vulnerabilities**: Predictable temp file names could be exploited
@@ -162,7 +162,7 @@ This project shows promise as a useful tool for converting web content to conver
 - Clear separation of concerns between scripts
 - Reasonable default voice mappings
 - Support for piping between tools
-- Async implementation in edge_tts_converter
+- Async implementation in md-convo2mp3
 
 ### Specific Code Issues
 
@@ -202,7 +202,7 @@ def generate_conversation(title: str, content: str, url: str,
         raise APIKeyError("ANTHROPIC_API_KEY environment variable not set")
 ```
 
-**edge_tts_converter.py:23-25**
+**md-convo2mp3.py:23-25**
 
 ```python
 # SECURITY VULNERABILITY

@@ -47,16 +47,16 @@ The project includes `doc2md-convo.py` which fetches web content or processes lo
 
 ```bash
 # Direct piping from URL to audio
-python3 doc2md-convo.py https://walterra.dev | python3 edge_tts_converter.py - -o walterra-dev.mp3
+python3 doc2md-convo.py https://walterra.dev | python3 md-convo2mp3.py - -o walterra-dev.mp3
 
 # From local text file
-python3 doc2md-convo.py document.txt | python3 edge_tts_converter.py - -o document-podcast.mp3
+python3 doc2md-convo.py document.txt | python3 md-convo2mp3.py - -o document-podcast.mp3
 
 # From PDF file
-python3 doc2md-convo.py report.pdf | python3 edge_tts_converter.py - -o report-podcast.mp3
+python3 doc2md-convo.py report.pdf | python3 md-convo2mp3.py - -o report-podcast.mp3
 
 # With custom style/personality
-python3 doc2md-convo.py document.md -s "Make it humorous with tech jokes" | python3 edge_tts_converter.py -
+python3 doc2md-convo.py document.md -s "Make it humorous with tech jokes" | python3 md-convo2mp3.py -
 ```
 
 ### Step-by-Step Usage
@@ -87,13 +87,13 @@ python3 doc2md-convo.py document.md -s "Make it humorous with tech jokes" | pyth
 
    ```bash
    # From file
-   python3 edge_tts_converter.py WALTERRA-DEV-CONVO.md -o walterra-dev.mp3
+   python3 md-convo2mp3.py WALTERRA-DEV-CONVO.md -o walterra-dev.mp3
 
    # From stdin
-   cat WALTERRA-DEV-CONVO.md | python3 edge_tts_converter.py - -o walterra-dev.mp3
+   cat WALTERRA-DEV-CONVO.md | python3 md-convo2mp3.py - -o walterra-dev.mp3
 
    # Interactive mode (prompts for file)
-   python3 edge_tts_converter.py
+   python3 md-convo2mp3.py
    ```
 
 ## How it works
@@ -101,7 +101,7 @@ python3 doc2md-convo.py document.md -s "Make it humorous with tech jokes" | pyth
 1. **doc2md-convo.py**:
    - For URLs: Fetches web content, cleans HTML, and uses Claude to generate a natural conversation
    - For local files: Reads content from .txt, .md, or .pdf files and processes with Claude
-2. **edge_tts_converter.py**: Parses conversation markdown (format: `**SPEAKER:** text`)
+2. **md-convo2mp3.py**: Parses conversation markdown (format: `**SPEAKER:** text`)
 3. Each speaker is assigned a different voice (ALEX: male, JORDAN: female)
 4. Audio is generated line by line with natural pauses
 5. All segments are combined into a single MP3 file
@@ -125,7 +125,7 @@ The final podcast is saved as `podcast.mp3` or custom file name in the same dire
 
 ### Voices
 
-You can modify the voices in `edge_tts_converter.py` by changing the voice names in the `VOICES` dictionary.
+You can modify the voices in `md-convo2mp3.py` by changing the voice names in the `VOICES` dictionary.
 
 ### Conversation Style
 
@@ -146,18 +146,18 @@ python3 doc2md-convo.py https://walterra.dev -s "Focus on the technical implemen
 
 ```bash
 # Convert a blog post to podcast
-python3 doc2md-convo.py https://walterra.dev/blog/2025-05-16-html-to-image-rendering-server | python3 edge_tts_converter.py - -o node-html2img-render-server-podcast.mp3
+python3 doc2md-convo.py https://walterra.dev/blog/2025-05-16-html-to-image-rendering-server | python3 md-convo2mp3.py - -o node-html2img-render-server-podcast.mp3
 
 # Convert local documentation to podcast
-python3 doc2md-convo.py README.md | python3 edge_tts_converter.py - -o readme-podcast.mp3
+python3 doc2md-convo.py README.md | python3 md-convo2mp3.py - -o readme-podcast.mp3
 
 # Process a research paper PDF
 python3 doc2md-convo.py research-paper.pdf -s "Explain like teaching to graduate students" -o RESEARCH-CONVO.md
-python3 edge_tts_converter.py RESEARCH-CONVO.md -o research-podcast.mp3
+python3 md-convo2mp3.py RESEARCH-CONVO.md -o research-podcast.mp3
 
 # Create a funny tech news summary from URL
 python3 doc2md-convo.py https://techcrunch.com/2025/06/04/elon-musks-introduction-to-politics/ -s "Make it a roasting comedy show" -o ROAST-CONVO.md
-python3 edge_tts_converter.py ROAST-CONVO.md
+python3 md-convo2mp3.py ROAST-CONVO.md
 ```
 
 ## License

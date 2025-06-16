@@ -15,7 +15,7 @@ The current codebase has minimal to no error handling. File operations, network 
 
 ## Affected Files
 
-- `edge_tts_converter.py` - No error handling for TTS operations
+- `md-convo2mp3.py` - No error handling for TTS operations
 - `text_to_speech.py` - No error handling for pyttsx3 operations
 - `doc2md-convo.py` - Basic error handling but no proper exceptions
 
@@ -64,7 +64,7 @@ class ConfigurationError(ConvoError):
 
 ### Step 2: Add Error Handling to File Operations
 
-Example for `edge_tts_converter.py`:
+Example for `md-convo2mp3.py`:
 
 ```python
 import logging

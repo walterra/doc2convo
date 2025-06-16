@@ -268,7 +268,7 @@ def main():
             f.write(header + conversation)
         print(f"Conversation saved to: {filename}")
         print("\nTo generate audio, run:")
-        print("python3 edge_tts_converter.py")
+        print("python3 md-convo2mp3.py")
         print(f"\nThis will create: {filename.replace('-CONVO.md', '-podcast.mp3')}")
     else:
         # Output to stdout for piping

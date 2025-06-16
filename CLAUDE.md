@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 doc2convo is a Python tool that converts web content and documents into conversational audio podcasts. It consists of two main components:
 - `doc2md-convo.py` - Fetches content from URLs or local files and generates natural conversations using Claude AI
-- `edge_tts_converter.py` - Converts conversation markdown to audio using Microsoft Edge's neural voices
+- `md-convo2mp3.py` - Converts conversation markdown to audio using Microsoft Edge's neural voices
 
 ## Development Commands
 
@@ -40,7 +40,7 @@ python scripts/add_license_header.py
 flake8 .
 
 # Type checking
-mypy edge_tts_converter.py doc2md-convo.py
+mypy md-convo2mp3.py doc2md-convo.py
 ```
 
 ### Running the Tools
@@ -53,10 +53,10 @@ python3 doc2md-convo.py https://example.com -o OUTPUT-CONVO.md
 python3 doc2md-convo.py document.pdf -s "Make it humorous"
 
 # Convert to audio
-python3 edge_tts_converter.py INPUT-CONVO.md -o output.mp3
+python3 md-convo2mp3.py INPUT-CONVO.md -o output.mp3
 
 # Direct piping workflow
-python3 doc2md-convo.py URL | python3 edge_tts_converter.py - -o podcast.mp3
+python3 doc2md-convo.py URL | python3 md-convo2mp3.py - -o podcast.mp3
 ```
 
 ## Code Architecture
@@ -70,7 +70,7 @@ The project implements a pipeline: Content Source → AI Conversation → Neural
    - Uses Anthropic Claude to generate natural dialogues between ALEX and JORDAN
    - Supports custom system prompts to influence conversation style
 
-2. **Audio Generation** (`edge_tts_converter.py`)
+2. **Audio Generation** (`md-convo2mp3.py`)
    - Parses markdown conversations (format: `**SPEAKER:** text`)
    - Maps speakers to voices: ALEX → ChristopherNeural, JORDAN → JennyNeural
    - Implements async TTS generation with edge-tts

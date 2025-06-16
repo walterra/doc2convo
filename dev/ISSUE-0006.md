@@ -349,7 +349,7 @@ def migrate_code():
     
     # Mapping of old files to new locations
     migrations = {
-        "edge_tts_converter.py": "tts/edge.py",
+        "md-convo2mp3.py": "tts/edge.py",
         "text_to_speech.py": "tts/pyttsx3.py",
         "doc2md-convo.py": "web/fetcher.py",
         "url_to_convo.py": "web/extractor.py",

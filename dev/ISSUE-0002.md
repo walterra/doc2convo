@@ -1,4 +1,4 @@
-# ISSUE-0002: Fix Command Injection Vulnerability in edge_tts_converter.py
+# ISSUE-0002: Fix Command Injection Vulnerability in md-convo2mp3.py
 
 **Priority**: CRITICAL  
 **Type**: Security Vulnerability  
@@ -7,7 +7,7 @@
 
 ## Problem
 
-The file `edge_tts_converter.py` lines 23-25 uses `os.system()` to remove temporary files:
+The file `md-convo2mp3.py` lines 23-25 uses `os.system()` to remove temporary files:
 
 ```python
 os.system("rm -rf temp_audio_files")
@@ -32,7 +32,7 @@ This is vulnerable to command injection if the directory name is ever made confi
 
 ### Current Vulnerable Code
 ```python
-# Line 23-25 in edge_tts_converter.py
+# Line 23-25 in md-convo2mp3.py
 os.system("rm -rf temp_audio_files")
 os.makedirs("temp_audio_files", exist_ok=True)
 ```
