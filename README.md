@@ -145,3 +145,7 @@ python3 url2convo.py https://walterra.dev/blog/2025-05-16-html-to-image-renderin
 python3 url2convo.py https://techcrunch.com/2025/06/04/elon-musks-introduction-to-politics/ -s "Make it a roasting comedy show" -o ROAST-CONVO.md
 python3 edge_tts_converter.py ROAST-CONVO.md
 ```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

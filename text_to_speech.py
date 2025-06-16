@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Copyright (c) 2025 Walter M. Rafelsberger
+# Licensed under the MIT License. See LICENSE file for details.
+
 import re
 import pyttsx3
 import time
