@@ -13,6 +13,7 @@ Supports URLs, .txt, .md, and .pdf files
 
 import argparse
 import os
+import random
 import re
 import sys
 from datetime import datetime
@@ -126,14 +127,22 @@ def generate_conversation(title, content, source, system_prompt=None):
     if system_prompt:
         system_prompt_section = f"{system_prompt}\n\n"
 
+    # Randomize role assignment to avoid gender bias
+    if random.choice([True, False]):
+        alex_role = "more analytical and detail-oriented, acting as the subject matter expert"
+        jordan_role = "more conversational, asking clarifying questions to help the audience understand"
+    else:
+        alex_role = "more conversational, asking clarifying questions to help the audience understand"
+        jordan_role = "more analytical and detail-oriented, acting as the subject matter expert"
+
     prompt_template = """You are tasked with creating a conversational podcast transcript from web content.
 
 Create a dialogue between two podcast hosts named ALEX and JORDAN. They should discuss the content in an engaging, informative way with natural conversation flow.
 
 Key requirements:
 - Format as markdown with **SPEAKER:** prefix for each line
-- ALEX tends to be more analytical and detail-oriented
-- JORDAN is more conversational and asks clarifying questions, for example asking for explaining acronyms, technical terms, a person's background, etc.
+- ALEX tends to be {alex_role}
+- JORDAN tends to be {jordan_role}
 - Include natural conversation elements like reactions, follow-up questions, and transitions
 - You must not use any code blocks or markdown formatting other than the **SPEAKER:** prefix
 - You must not use any markdown elements like *laughs* or *pauses*; instead, use natural dialogue
@@ -141,7 +150,9 @@ Key requirements:
 - Keep it engaging and accessible
 - Length should be substantial but not excessive (aim for 15-25 exchanges)
 
-{system_prompt_section}Source: {source}
+{system_prompt_section}
+
+Source: {source}
 Title: {title}
 
 Content to discuss:
@@ -150,6 +161,8 @@ Content to discuss:
 Generate the podcast transcript:"""
 
     prompt = prompt_template.format(
+        alex_role=alex_role,
+        jordan_role=jordan_role,
         system_prompt_section=system_prompt_section,
         source=source,
         title=title,
