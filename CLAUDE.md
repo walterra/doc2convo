@@ -4,19 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-doc2convo is a Python-based conversation-to-audio converter that transforms markdown-formatted conversations into audio podcasts with distinct voices for each speaker. The project provides two implementations:
-- `text_to_speech.py` - Offline TTS using pyttsx3
-- `edge_tts_converter.py` - Online TTS using Microsoft Edge's neural voices
+doc2convo is a Python-based conversation-to-audio converter that transforms markdown-formatted conversations into audio podcasts with distinct voices for each speaker using Microsoft Edge's neural voices via `edge_tts_converter.py`.
 
 ## Development Commands
 
-### Setup and Run (pyttsx3 version)
-```bash
-pip install -r requirements.txt
-python text_to_speech.py
-```
-
-### Setup and Run (edge-tts version - recommended)
+### Setup and Run
 ```bash
 pip install -r requirements-edge.txt
 python edge_tts_converter.py
@@ -31,26 +23,24 @@ Since there are no automated tests, manually verify:
 ## Code Architecture
 
 ### Core Components
-1. **Conversation Parser** (`parse_conversation()` in both files)
+1. **Conversation Parser** (`parse_conversation()` in edge_tts_converter.py)
    - Regex pattern: `r'\*\*([A-Z]+):\*\* (.+)'`
    - Returns list of (speaker, text) tuples
 
 2. **Voice Mapping**
-   - ALEX: Male voice (Christopher in edge-tts, system male voice in pyttsx3)
-   - JORDAN: Female voice (Jenny in edge-tts, system female voice in pyttsx3)
+   - ALEX: Male voice (Christopher in edge-tts)
+   - JORDAN: Female voice (Jenny in edge-tts)
 
 3. **Audio Processing**
-   - pyttsx3: Direct playback, no file output
-   - edge-tts: Generates temporary MP3s, combines with 300ms pauses, outputs to `podcast.mp3`
+   - Generates temporary MP3s, combines with 300ms pauses, outputs to `podcast.mp3`
 
 ### Key Implementation Details
 - Input file hardcoded as `DAILY-CONVO.md`
-- Output file (edge-tts only) hardcoded as `podcast.mp3`
+- Output file hardcoded as `podcast.mp3`
 - edge_tts_converter.py uses async/await pattern
-- Temporary files cleaned up automatically in edge-tts version
+- Temporary files cleaned up automatically
 
 ### Important Notes
 - No error handling for missing files or TTS failures
 - edge-tts requires internet connection
-- pyttsx3 uses system TTS (quality varies by OS)
 - Unknown speakers default to ALEX's voice

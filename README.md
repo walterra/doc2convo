@@ -13,21 +13,13 @@ It's recommended to use a virtual environment to avoid conflicts with system Pyt
 python3 -m venv convo-env
 
 # Activate the virtual environment
-source convo-env/bin/activate
+source ./convo-env/bin/activate
 
 # When you're done, deactivate with:
-# deactivate
+deactivate
 ```
 
-### Option 1: Using pyttsx3 (Simple, works offline)
-
-```bash
-# Make sure your virtual environment is activated first
-pip install -r requirements.txt
-python text_to_speech.py
-```
-
-### Option 2: Using edge-tts (Better quality voices)
+### Using edge-tts (Neural quality voices)
 
 ```bash
 # Make sure your virtual environment is activated first
@@ -35,7 +27,7 @@ pip install -r requirements-edge.txt
 python edge_tts_converter.py
 ```
 
-### Option 3: Full workflow with web content and local files (Recommended)
+### Full workflow with web content and local files (Recommended)
 
 ```bash
 # Make sure your virtual environment is activated first
@@ -79,13 +71,13 @@ python3 url2convo.py document.md -s "Make it humorous with tech jokes" | python3
    ```bash
    # From URL - output to file
    python3 url2convo.py https://walterra.dev -o WALTERRA-DEV-CONVO.md
-   
+
    # From local text file
    python3 url2convo.py document.txt -o DOCUMENT-CONVO.md
-   
+
    # From markdown file
    python3 url2convo.py README.md -o README-CONVO.md
-   
+
    # From PDF file
    python3 url2convo.py report.pdf -o REPORT-CONVO.md
 
@@ -111,7 +103,7 @@ python3 url2convo.py document.md -s "Make it humorous with tech jokes" | python3
 
 ## How it works
 
-1. **url2convo.py**: 
+1. **url2convo.py**:
    - For URLs: Fetches web content, cleans HTML, and uses Claude to generate a natural conversation
    - For local files: Reads content from .txt, .md, or .pdf files and processes with Claude
 2. **edge_tts_converter.py**: Parses conversation markdown (format: `**SPEAKER:** text`)
@@ -132,17 +124,13 @@ The final podcast is saved as `podcast.mp3` or custom file name in the same dire
 
 - Python 3.7+
 - For edge-tts: Internet connection (uses Microsoft Edge's text-to-speech service)
-- For pyttsx3: Works offline using system TTS
 - For url2convo: Anthropic API key (set as environment variable)
 
 ## Customization
 
 ### Voices
 
-You can modify the voices in either script:
-
-- In `edge_tts_converter.py`: Change the voice names in the `VOICES` dictionary
-- In `text_to_speech.py`: Adjust rate and voice selection in `setup_voices()`
+You can modify the voices in `edge_tts_converter.py` by changing the voice names in the `VOICES` dictionary.
 
 ### Conversation Style
 
