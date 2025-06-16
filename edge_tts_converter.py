@@ -6,6 +6,8 @@ from pydub import AudioSegment
 from pathlib import Path
 import os
 import glob
+import sys
+import argparse
 
 # Voice options from edge-tts
 VOICES = {
@@ -13,10 +15,17 @@ VOICES = {
     'JORDAN': 'en-US-JennyNeural'          # Female voice
 }
 
-def parse_conversation(markdown_file):
-    """Parse markdown file and extract speaker lines"""
-    with open(markdown_file, 'r') as f:
-        content = f.read()
+def parse_conversation(input_source):
+    """Parse markdown content and extract speaker lines
+    
+    Args:
+        input_source: Either a filename or '-' for stdin
+    """
+    if input_source == '-':
+        content = sys.stdin.read()
+    else:
+        with open(input_source, 'r') as f:
+            content = f.read()
     
     lines = content.split('\n')
     conversation = []
@@ -108,17 +117,45 @@ def get_output_filename(input_file):
         return input_file.replace(".md", "-podcast.mp3")
 
 async def main():
-    input_file = select_conversation_file()
-    if not input_file:
-        return
+    parser = argparse.ArgumentParser(
+        description='Convert conversation markdown to audio podcast',
+        epilog='Use "-" as input to read from stdin. Example: python url2convo.py URL | python edge_tts_converter.py - -o output.mp3'
+    )
+    parser.add_argument('input', nargs='?', help='Input markdown file (use "-" for stdin, or leave empty to select from available files)')
+    parser.add_argument('--output', '-o', help='Output MP3 filename (default: based on input filename or "podcast.mp3" for stdin)')
     
+    args = parser.parse_args()
+    
+    # Determine input source
+    if args.input:
+        if args.input == '-':
+            input_file = '-'
+        else:
+            input_file = args.input
+            if not os.path.exists(input_file):
+                print(f"Error: Input file '{input_file}' not found!")
+                return
+    else:
+        # No input specified, use interactive selection
+        input_file = select_conversation_file()
+        if not input_file:
+            return
+    
+    # Parse conversation
     conversation = parse_conversation(input_file)
     
     if not conversation:
         print("No conversation found!")
         return
     
-    output_file = get_output_filename(input_file)
+    # Determine output filename
+    if args.output:
+        output_file = args.output
+    elif input_file == '-':
+        output_file = 'podcast.mp3'
+    else:
+        output_file = get_output_filename(input_file)
+    
     print(f"Found {len(conversation)} lines of dialogue")
     await create_podcast(conversation, output_file)
 

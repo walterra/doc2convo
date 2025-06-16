@@ -43,7 +43,7 @@ def fetch_url_content(url):
         return title.strip(), text
         
     except Exception as e:
-        print(f"Error fetching URL: {e}")
+        print(f"Error fetching URL: {e}", file=sys.stderr)
         return None, None
 
 def generate_conversation(title, content, url, system_prompt=None):
@@ -52,8 +52,8 @@ def generate_conversation(title, content, url, system_prompt=None):
     # Check for API key
     api_key = os.getenv('ANTHROPIC_API_KEY')
     if not api_key:
-        print("Error: ANTHROPIC_API_KEY environment variable not set")
-        print("Please set your API key: export ANTHROPIC_API_KEY='your-key-here'")
+        print("Error: ANTHROPIC_API_KEY environment variable not set", file=sys.stderr)
+        print("Please set your API key: export ANTHROPIC_API_KEY='your-key-here'", file=sys.stderr)
         return None
     
     client = Anthropic(api_key=api_key)
@@ -99,7 +99,7 @@ Generate the podcast transcript:"""
         return response.content[0].text
         
     except Exception as e:
-        print(f"Error calling Claude API: {e}")
+        print(f"Error calling Claude API: {e}", file=sys.stderr)
         return None
 
 def save_conversation(conversation, url, title):
@@ -133,28 +133,40 @@ def save_conversation(conversation, url, title):
     return filename
 
 def main():
-    parser = argparse.ArgumentParser(description='Generate conversational podcast from URL')
+    parser = argparse.ArgumentParser(
+        description='Generate conversational podcast from URL',
+        epilog='If no output file is specified, writes to stdout for piping.'
+    )
     parser.add_argument('url', help='URL to convert to conversation')
-    parser.add_argument('--output', '-o', help='Output filename (optional)')
+    parser.add_argument('--output', '-o', help='Output filename (if not specified, writes to stdout)')
     parser.add_argument('--system-prompt', '-s', help='Additional system prompt to influence the conversation style')
     
     args = parser.parse_args()
     
-    print(f"Fetching content from: {args.url}")
+    # Only print status messages to stderr when outputting to stdout
+    output_to_stdout = args.output is None
+    
+    def status_print(msg):
+        if output_to_stdout:
+            print(msg, file=sys.stderr)
+        else:
+            print(msg)
+    
+    status_print(f"Fetching content from: {args.url}")
     title, content = fetch_url_content(args.url)
     
     if not content:
-        print("Failed to fetch content from URL")
+        status_print("Failed to fetch content from URL")
         return 1
     
-    print(f"Found article: {title}")
-    print(f"Content length: {len(content)} characters")
-    print("Generating conversation with Claude...")
+    status_print(f"Found article: {title}")
+    status_print(f"Content length: {len(content)} characters")
+    status_print("Generating conversation with Claude...")
     
     conversation = generate_conversation(title, content, args.url, args.system_prompt)
     
     if not conversation:
-        print("Failed to generate conversation")
+        status_print("Failed to generate conversation")
         return 1
     
     if args.output:
@@ -167,12 +179,17 @@ def main():
 """
             f.write(header + conversation)
         print(f"Conversation saved to: {filename}")
+        print(f"\nTo generate audio, run:")
+        print(f"python3 edge_tts_converter.py")
+        print(f"\nThis will create: {filename.replace('-CONVO.md', '-podcast.mp3')}")
     else:
-        filename = save_conversation(conversation, args.url, title)
-    
-    print(f"\nTo generate audio, run:")
-    print(f"python3 edge_tts_converter.py")
-    print(f"\nThis will create: {filename.replace('-CONVO.md', '-podcast.mp3')}")
+        # Output to stdout for piping
+        header = f"""# Conversational Summary - {title}
+## Generated from URL: {args.url}
+## Date: {datetime.now().strftime('%B %d, %Y')}
+
+"""
+        print(header + conversation)
     
     return 0
 
