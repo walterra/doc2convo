@@ -5,8 +5,9 @@
 
 
 """
-url2convo: URL to Conversation Generator
-Uses Claude SDK to convert web content into conversational podcast format
+url2convo: URL/File to Conversation Generator
+Uses Claude SDK to convert web content or local files into conversational podcast format
+Supports URLs, .txt, .md, and .pdf files
 """
 
 
@@ -15,10 +16,60 @@ import os
 import re
 import sys
 from datetime import datetime
+from pathlib import Path
+from urllib.parse import urlparse
 
 import requests
 from anthropic import Anthropic
 from bs4 import BeautifulSoup
+
+
+def read_local_file(file_path):
+    """Read content from local file (txt, md, pdf)"""
+    try:
+        path = Path(file_path)
+        if not path.exists():
+            print(f"Error: File not found: {file_path}", file=sys.stderr)
+            return None, None
+        
+        file_extension = path.suffix.lower()
+        
+        if file_extension == '.pdf':
+            try:
+                import PyPDF2
+                with open(file_path, 'rb') as file:
+                    pdf_reader = PyPDF2.PdfReader(file)
+                    text = ""
+                    for page in pdf_reader.pages:
+                        text += page.extract_text() + "\n"
+                    title = path.stem
+                    return title, text.strip()
+            except ImportError:
+                print("Error: PyPDF2 not installed. Install with: pip install PyPDF2", file=sys.stderr)
+                return None, None
+        
+        elif file_extension in ['.txt', '.md']:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                content = file.read()
+                title = path.stem
+                return title, content.strip()
+        
+        else:
+            print(f"Error: Unsupported file type: {file_extension}. Supported: .txt, .md, .pdf", file=sys.stderr)
+            return None, None
+            
+    except Exception as e:
+        print(f"Error reading file: {e}", file=sys.stderr)
+        return None, None
+
+
+def is_url(string):
+    """Check if string is a URL"""
+    try:
+        result = urlparse(string)
+        return all([result.scheme, result.netloc])
+    except:
+        return False
 
 
 def fetch_url_content(url):
@@ -55,7 +106,7 @@ def fetch_url_content(url):
         return None, None
 
 
-def generate_conversation(title, content, url, system_prompt=None):
+def generate_conversation(title, content, source, system_prompt=None):
     """Generate conversational summary using Claude"""
 
     # Check for API key
@@ -90,7 +141,7 @@ Key requirements:
 - Keep it engaging and accessible
 - Length should be substantial but not excessive (aim for 15-25 exchanges)
 
-{system_prompt_section}Source URL: {url}
+{system_prompt_section}Source: {source}
 Title: {title}
 
 Content to discuss:
@@ -100,7 +151,7 @@ Generate the podcast transcript:"""
 
     prompt = prompt_template.format(
         system_prompt_section=system_prompt_section,
-        url=url,
+        source=source,
         title=title,
         content=content[:8000],
     )
@@ -120,25 +171,28 @@ Generate the podcast transcript:"""
         return None
 
 
-def save_conversation(conversation, url, title):
+def save_conversation(conversation, source, title):
     """Save conversation to markdown file"""
-    # Create filename from title or URL
+    # Create filename from title or source
     if title and title != "Web Article":
         filename = re.sub(r"[^\w\s-]", "", title)
         filename = re.sub(r"[-\s]+", "-", filename)
         filename = filename.strip("-").lower()
     else:
-        # Use domain name from URL
-        from urllib.parse import urlparse
-
-        domain = urlparse(url).netloc
-        filename = domain.replace(".", "-")
+        if is_url(source):
+            # Use domain name from URL
+            domain = urlparse(source).netloc
+            filename = domain.replace(".", "-")
+        else:
+            # Use file name without extension
+            filename = Path(source).stem
 
     filename = f"{filename}-CONVO.md"
 
     # Add header with metadata
+    source_type = "URL" if is_url(source) else "File"
     header = f"""# Conversational Summary - {title}
-## Generated from URL: {url}
+## Generated from {source_type}: {source}
 ## Date: {datetime.now().strftime('%B %d, %Y')}
 
 """
@@ -154,10 +208,10 @@ def save_conversation(conversation, url, title):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Generate conversational podcast from URL",
-        epilog="If no output file is specified, writes to stdout for piping.",
+        description="Generate conversational podcast from URL or local file",
+        epilog="If no output file is specified, writes to stdout for piping. Supports .txt, .md, and .pdf files.",
     )
-    parser.add_argument("url", help="URL to convert to conversation")
+    parser.add_argument("source", help="URL or local file path (.txt, .md, .pdf) to convert to conversation")
     parser.add_argument(
         "--output", "-o", help="Output filename (if not specified, writes to stdout)"
     )
@@ -178,18 +232,25 @@ def main():
         else:
             print(msg)
 
-    status_print(f"Fetching content from: {args.url}")
-    title, content = fetch_url_content(args.url)
+    # Determine if source is URL or file
+    if is_url(args.source):
+        status_print(f"Fetching content from URL: {args.source}")
+        title, content = fetch_url_content(args.source)
+        if not content:
+            status_print("Failed to fetch content from URL")
+            return 1
+    else:
+        status_print(f"Reading content from file: {args.source}")
+        title, content = read_local_file(args.source)
+        if not content:
+            status_print("Failed to read content from file")
+            return 1
 
-    if not content:
-        status_print("Failed to fetch content from URL")
-        return 1
-
-    status_print(f"Found article: {title}")
+    status_print(f"Found content: {title}")
     status_print(f"Content length: {len(content)} characters")
     status_print("Generating conversation with Claude...")
 
-    conversation = generate_conversation(title, content, args.url, args.system_prompt)
+    conversation = generate_conversation(title, content, args.source, args.system_prompt)
 
     if not conversation:
         status_print("Failed to generate conversation")
@@ -198,8 +259,9 @@ def main():
     if args.output:
         filename = args.output
         with open(filename, "w", encoding="utf-8") as f:
+            source_type = "URL" if is_url(args.source) else "File"
             header = f"""# Conversational Summary - {title}
-## Generated from URL: {args.url}
+## Generated from {source_type}: {args.source}
 ## Date: {datetime.now().strftime('%B %d, %Y')}
 
 """
@@ -210,8 +272,9 @@ def main():
         print(f"\nThis will create: {filename.replace('-CONVO.md', '-podcast.mp3')}")
     else:
         # Output to stdout for piping
+        source_type = "URL" if is_url(args.source) else "File"
         header = f"""# Conversational Summary - {title}
-## Generated from URL: {args.url}
+## Generated from {source_type}: {args.source}
 ## Date: {datetime.now().strftime('%B %d, %Y')}
 
 """

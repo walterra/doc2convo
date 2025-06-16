@@ -35,11 +35,11 @@ pip install -r requirements-edge.txt
 python edge_tts_converter.py
 ```
 
-### Option 3: Full workflow with web content (Recommended)
+### Option 3: Full workflow with web content and local files (Recommended)
 
 ```bash
 # Make sure your virtual environment is activated first
-pip install -r requirements-claude.txt
+pip install -r requirements-url2convo.txt
 
 # Set your Anthropic API key
 export ANTHROPIC_API_KEY='your-api-key-here'
@@ -47,31 +47,53 @@ export ANTHROPIC_API_KEY='your-api-key-here'
 
 ## Complete Workflow: Web to Audio
 
-The project includes `url2convo.py` which fetches web content and generates conversational podcasts using Claude AI.
+The project includes `url2convo.py` which fetches web content or processes local files and generates conversational podcasts using Claude AI.
 
-### Quick Start (URL to MP3 in one command)
+### Supported Input Types
+
+- **URLs**: Any web page (HTML content is cleaned and processed)
+- **Text files**: `.txt` files with plain text content
+- **Markdown files**: `.md` files with markdown formatting
+- **PDF files**: `.pdf` files (requires PyPDF2 - included in requirements)
+
+### Quick Start Examples
 
 ```bash
 # Direct piping from URL to audio
 python3 url2convo.py https://walterra.dev | python3 edge_tts_converter.py - -o walterra-dev.mp3
 
+# From local text file
+python3 url2convo.py document.txt | python3 edge_tts_converter.py - -o document-podcast.mp3
+
+# From PDF file
+python3 url2convo.py report.pdf | python3 edge_tts_converter.py - -o report-podcast.mp3
+
 # With custom style/personality
-python3 url2convo.py https://walterra.dev -s "Make it humorous with tech jokes" | python3 edge_tts_converter.py -
+python3 url2convo.py document.md -s "Make it humorous with tech jokes" | python3 edge_tts_converter.py -
 ```
 
 ### Step-by-Step Usage
 
-1. **Generate conversation from URL**
+1. **Generate conversation from URL or local file**
 
    ```bash
-   # Output to file
+   # From URL - output to file
    python3 url2convo.py https://walterra.dev -o WALTERRA-DEV-CONVO.md
+   
+   # From local text file
+   python3 url2convo.py document.txt -o DOCUMENT-CONVO.md
+   
+   # From markdown file
+   python3 url2convo.py README.md -o README-CONVO.md
+   
+   # From PDF file
+   python3 url2convo.py report.pdf -o REPORT-CONVO.md
 
    # Output to stdout (for piping)
-   python3 url2convo.py https://walterra.dev
+   python3 url2convo.py document.txt
 
    # With custom system prompt
-   python3 url2convo.py https://walterra.dev -s "Make it humorous with tech jokes"
+   python3 url2convo.py document.md -s "Make it humorous with tech jokes"
    ```
 
 2. **Convert conversation to audio**
@@ -89,7 +111,9 @@ python3 url2convo.py https://walterra.dev -s "Make it humorous with tech jokes" 
 
 ## How it works
 
-1. **url2convo.py**: Fetches web content, cleans HTML, and uses Claude to generate a natural conversation
+1. **url2convo.py**: 
+   - For URLs: Fetches web content, cleans HTML, and uses Claude to generate a natural conversation
+   - For local files: Reads content from .txt, .md, or .pdf files and processes with Claude
 2. **edge_tts_converter.py**: Parses conversation markdown (format: `**SPEAKER:** text`)
 3. Each speaker is assigned a different voice (ALEX: male, JORDAN: female)
 4. Audio is generated line by line with natural pauses
@@ -141,7 +165,14 @@ python3 url2convo.py https://walterra.dev -s "Focus on the technical implementat
 # Convert a blog post to podcast
 python3 url2convo.py https://walterra.dev/blog/2025-05-16-html-to-image-rendering-server | python3 edge_tts_converter.py - -o node-html2img-render-server-podcast.mp3
 
-# Create a funny tech news summary
+# Convert local documentation to podcast
+python3 url2convo.py README.md | python3 edge_tts_converter.py - -o readme-podcast.mp3
+
+# Process a research paper PDF
+python3 url2convo.py research-paper.pdf -s "Explain like teaching to graduate students" -o RESEARCH-CONVO.md
+python3 edge_tts_converter.py RESEARCH-CONVO.md -o research-podcast.mp3
+
+# Create a funny tech news summary from URL
 python3 url2convo.py https://techcrunch.com/2025/06/04/elon-musks-introduction-to-politics/ -s "Make it a roasting comedy show" -o ROAST-CONVO.md
 python3 edge_tts_converter.py ROAST-CONVO.md
 ```
