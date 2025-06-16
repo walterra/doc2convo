@@ -19,21 +19,16 @@ source ./convo-env/bin/activate
 deactivate
 ```
 
-### Using edge-tts (Neural quality voices)
+### Installation
 
 ```bash
 # Make sure your virtual environment is activated first
-pip install -r requirements-edge.txt
-python edge_tts_converter.py
-```
+pip install -r requirements.txt
 
-### Full workflow with web content and local files (Recommended)
+# For development tools (optional)
+pip install -r requirements-dev.txt
 
-```bash
-# Make sure your virtual environment is activated first
-pip install -r requirements-url2convo.txt
-
-# Set your Anthropic API key
+# Set your Anthropic API key (for url2convo.py)
 export ANTHROPIC_API_KEY='your-api-key-here'
 ```
 

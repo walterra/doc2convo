@@ -1,1 +1,15 @@
+# Core dependencies for edge-tts audio generation
+edge-tts==6.1.9
+pydub==0.25.1
+
+# Dependencies for url2convo (AI conversation generation)
+anthropic>=0.54.0
+requests>=2.32.0
+beautifulsoup4>=4.13.0
+PyPDF2>=3.0.0
+
+# Markdown parsing (legacy dependency)
 markdown==3.5.1
+
+# Development dependencies (optional)
+# Install with: pip install -r requirements-dev.txt

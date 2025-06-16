@@ -18,13 +18,10 @@ source ./convo-env/bin/activate
 
 ### Install Dependencies
 ```bash
-# For edge-tts only
-pip install -r requirements-edge.txt
+# Install all dependencies
+pip install -r requirements.txt
 
-# For full workflow (includes Anthropic SDK)
-pip install -r requirements-url2convo.txt
-
-# For development tools
+# For development tools (optional)
 pip install -r requirements-dev.txt
 ```
 
