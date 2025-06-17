@@ -4,10 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-doc2convo is a Python tool that converts web content and documents into conversational audio podcasts. It consists of two main components:
+doc2convo is a Python package that converts web content and documents into conversational audio podcasts. It consists of two main components:
 
-- `doc2md-convo.py` - Fetches content from URLs or local files and generates natural conversations using Claude AI
-- `md-convo2mp3.py` - Converts conversation markdown to audio using Microsoft Edge's neural voices
+- `doc2md-convo` - Fetches content from URLs or local files and generates natural conversations using Claude AI
+- `md-convo2mp3` - Converts conversation markdown to audio using Microsoft Edge's neural voices
 
 ## Development Commands
 
@@ -21,10 +21,14 @@ source ./doc2convo-env/bin/activate
 ### Install Dependencies
 
 ```bash
-# Install all dependencies
-pip install -r requirements.txt
+# Install package in editable mode
+pip install -e .
 
-# For development tools (optional)
+# For development tools
+pip install -e ".[dev]"
+
+# Or using requirements files (legacy)
+pip install -r requirements.txt
 pip install -r requirements-dev.txt
 ```
 
@@ -44,7 +48,7 @@ python scripts/add_license_header.py
 flake8 .
 
 # Type checking
-mypy md-convo2mp3.py doc2md-convo.py
+mypy src/
 ```
 
 ### Running the Tools
@@ -54,17 +58,17 @@ mypy md-convo2mp3.py doc2md-convo.py
 export ANTHROPIC_API_KEY='your-api-key-here'
 
 # Generate conversation from URL/file
-python3 doc2md-convo.py https://example.com -o OUTPUT-CONVO.md
-python3 doc2md-convo.py document.pdf -s "Make it humorous"
+doc2md-convo https://example.com -o OUTPUT-CONVO.md
+doc2md-convo document.pdf -s "Make it humorous"
 
 # Convert to audio (default: Edge TTS)
-python3 md-convo2mp3.py INPUT-CONVO.md -o output.mp3
+md-convo2mp3 INPUT-CONVO.md -o output.mp3
 
 # Use Orpheus TTS (requires LM Studio running)
-python3 md-convo2mp3.py INPUT-CONVO.md --tts-engine orpheus -o output.mp3
+md-convo2mp3 INPUT-CONVO.md --tts-engine orpheus -o output.mp3
 
 # Direct piping workflow
-python3 doc2md-convo.py URL | python3 md-convo2mp3.py - -o podcast.mp3
+doc2md-convo URL | md-convo2mp3 - -o podcast.mp3
 ```
 
 ## Code Architecture
@@ -73,14 +77,14 @@ python3 doc2md-convo.py URL | python3 md-convo2mp3.py - -o podcast.mp3
 
 The project implements a pipeline: Content Source → AI Conversation → Neural TTS Audio
 
-1. **Content Ingestion** (`doc2md-convo.py`)
+1. **Content Ingestion** (`doc2md-convo`)
 
    - Accepts URLs (via requests + BeautifulSoup for HTML cleaning)
    - Processes local files: .txt, .md, .pdf (via PyPDF2)
    - Uses Anthropic Claude to generate natural dialogues between ALEX and JORDAN
    - Supports custom system prompts to influence conversation style
 
-2. **Audio Generation** (`md-convo2mp3.py`)
+2. **Audio Generation** (`md-convo2mp3`)
    - Parses markdown conversations (format: `**SPEAKER:** text`)
    - Maps speakers to voices: ALEX → ChristopherNeural, JORDAN → JennyNeural
    - Implements async TTS generation with edge-tts
@@ -97,9 +101,29 @@ The project implements a pipeline: Content Source → AI Conversation → Neural
 - Temporary audio files cleaned up automatically
 - Output filenames auto-generated from source when using stdin
 
+### Package Structure
+
+The project is organized as a proper Python package:
+
+```
+src/doc2convo/
+├── __init__.py          # Package initialization
+├── cli/                 # Command-line interfaces
+│   ├── main.py         # Main entry point
+│   ├── doc2md.py       # Document to markdown CLI
+│   └── md2mp3.py       # Markdown to audio CLI
+├── converters/          # Audio conversion modules
+│   └── audio.py        # AudioConverter class
+├── generators/          # AI conversation generation
+│   └── conversation.py # ConversationGenerator class
+├── utils/               # Utility modules
+│   └── content_fetcher.py # ContentFetcher class
+└── exceptions.py        # Custom exceptions
+```
+
 ### Project Configuration
 
-- `pyproject.toml` - Configures Black, isort, flake8, and mypy settings
+- `pyproject.toml` - Package metadata and tool configurations (Black, isort, flake8, mypy)
 - Development issues tracked in `dev/ISSUE-*.md` files
 - No automated tests - manual verification required
 

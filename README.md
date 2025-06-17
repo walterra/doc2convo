@@ -21,6 +21,21 @@ deactivate
 
 ### Installation
 
+#### Install as Package (Recommended)
+
+```bash
+# Make sure your virtual environment is activated first
+pip install -e .
+
+# For development tools (optional)
+pip install -e ".[dev]"
+
+# Set your Anthropic API key (for doc2md-convo command)
+export ANTHROPIC_API_KEY='your-api-key-here'
+```
+
+#### Install from Requirements (Legacy)
+
 ```bash
 # Make sure your virtual environment is activated first
 pip install -r requirements.txt
@@ -28,7 +43,7 @@ pip install -r requirements.txt
 # For development tools (optional)
 pip install -r requirements-dev.txt
 
-# Set your Anthropic API key (for doc2md-convo.py)
+# Set your Anthropic API key (for doc2md-convo command)
 export ANTHROPIC_API_KEY='your-api-key-here'
 
 # For Orpheus TTS support (optional)
@@ -44,7 +59,7 @@ python3 setup-orpheus.py
 
 ## Complete Workflow: Web to Audio
 
-The project includes `doc2md-convo.py` which fetches web content or processes local files and generates conversational podcasts using Claude AI.
+The project includes the `doc2md-convo` command which fetches web content or processes local files and generates conversational podcasts using Claude AI.
 
 ### Supported Input Types
 
@@ -56,20 +71,26 @@ The project includes `doc2md-convo.py` which fetches web content or processes lo
 ### Quick Start Examples
 
 ```bash
-# Direct piping from URL to audio (using edge-tts)
+# Direct piping from URL to audio (after package installation)
+doc2md-convo https://walterra.dev | md-convo2mp3 - -o walterra-dev.mp3
+
+# Or using the legacy scripts directly
 python3 doc2md-convo.py https://walterra.dev | python3 md-convo2mp3.py - -o walterra-dev.mp3
 
+# From local text file
+doc2md-convo document.txt | md-convo2mp3 - -o document-podcast.mp3
+
 # From local text file with Orpheus TTS
-python3 doc2md-convo.py document.txt --tts-engine orpheus | python3 md-convo2mp3.py - --tts-engine orpheus -o document-podcast.mp3
+doc2md-convo document.txt | md-convo2mp3 - --tts-engine orpheus -o document-podcast.mp3
 
 # From PDF file
-python3 doc2md-convo.py report.pdf | python3 md-convo2mp3.py - -o report-podcast.mp3
+doc2md-convo report.pdf | md-convo2mp3 - -o report-podcast.mp3
 
 # With custom style/personality
-python3 doc2md-convo.py document.md -s "Make it humorous with tech jokes" | python3 md-convo2mp3.py -
+doc2md-convo document.md -s "Make it humorous with tech jokes" | md-convo2mp3 -
 
 # Using Orpheus TTS with custom voices
-python3 doc2md-convo.py article.md --tts-engine orpheus | python3 md-convo2mp3.py - --tts-engine orpheus --alex-voice zac --jordan-voice zoe
+doc2md-convo article.md | md-convo2mp3 - --tts-engine orpheus --alex-voice zac --jordan-voice zoe
 ```
 
 ### Step-by-Step Usage
@@ -78,52 +99,55 @@ python3 doc2md-convo.py article.md --tts-engine orpheus | python3 md-convo2mp3.p
 
    ```bash
    # From URL - output to file
-   python3 doc2md-convo.py https://walterra.dev -o WALTERRA-DEV-CONVO.md
+   doc2md-convo https://walterra.dev -o WALTERRA-DEV-CONVO.md
 
    # From local text file
-   python3 doc2md-convo.py document.txt -o DOCUMENT-CONVO.md
+   doc2md-convo document.txt -o DOCUMENT-CONVO.md
 
    # From markdown file
-   python3 doc2md-convo.py README.md -o README-CONVO.md
+   doc2md-convo README.md -o README-CONVO.md
 
    # From PDF file
-   python3 doc2md-convo.py report.pdf -o REPORT-CONVO.md
+   doc2md-convo report.pdf -o REPORT-CONVO.md
 
    # Output to stdout (for piping)
-   python3 doc2md-convo.py document.txt
+   doc2md-convo document.txt
 
    # With custom system prompt
-   python3 doc2md-convo.py document.md -s "Make it humorous with tech jokes"
+   doc2md-convo document.md -s "Make it humorous with tech jokes"
 
    # Using Orpheus TTS (with emotional tags support)
-   python3 doc2md-convo.py document.md --tts-engine orpheus -o DOCUMENT-CONVO.md
+   doc2md-convo document.md --tts-engine orpheus -o DOCUMENT-CONVO.md
    ```
 
 2. **Convert conversation to audio**
 
    ```bash
    # From file
-   python3 md-convo2mp3.py WALTERRA-DEV-CONVO.md -o walterra-dev.mp3
+   md-convo2mp3 WALTERRA-DEV-CONVO.md -o walterra-dev.mp3
 
    # From stdin
-   cat WALTERRA-DEV-CONVO.md | python3 md-convo2mp3.py - -o walterra-dev.mp3
+   cat WALTERRA-DEV-CONVO.md | md-convo2mp3 - -o walterra-dev.mp3
 
    # Interactive mode (prompts for file)
-   python3 md-convo2mp3.py
+   md-convo2mp3
 
    # Using Orpheus TTS instead of edge-tts
-   python3 md-convo2mp3.py DOCUMENT-CONVO.md --tts-engine orpheus
+   md-convo2mp3 DOCUMENT-CONVO.md --tts-engine orpheus
 
    # Custom voices with Orpheus TTS
-   python3 md-convo2mp3.py DOCUMENT-CONVO.md --tts-engine orpheus --alex-voice zac --jordan-voice zoe
+   md-convo2mp3 DOCUMENT-CONVO.md --tts-engine orpheus --alex-voice zac --jordan-voice zoe
+
+   # See help for options
+   md-convo2mp3 --help
    ```
 
 ## How it works
 
-1. **doc2md-convo.py**:
+1. **doc2md-convo**:
    - For URLs: Fetches web content, cleans HTML, and uses Claude to generate a natural conversation
    - For local files: Reads content from .txt, .md, or .pdf files and processes with Claude
-2. **md-convo2mp3.py**: Parses conversation markdown (format: `**SPEAKER:** text`)
+2. **md-convo2mp3**: Parses conversation markdown (format: `**SPEAKER:** text`)
 3. Each speaker is assigned a different voice (ALEX: male, JORDAN: female)
 4. Audio is generated line by line with natural pauses
 5. All segments are combined into a single MP3 file
@@ -183,35 +207,35 @@ When using Orpheus TTS, you can include emotional tags in the conversation:
 
 ### Conversation Style
 
-Use the `--system-prompt`/`-s` flag with doc2md-convo.py to influence the conversation:
+Use the `--system-prompt`/`-s` flag with doc2md-convo to influence the conversation:
 
 ```bash
 # Make it educational
-python3 doc2md-convo.py https://walterra.dev -s "Explain concepts like teaching to beginners"
+doc2md-convo https://walterra.dev -s "Explain concepts like teaching to beginners"
 
 # Add humor
-python3 doc2md-convo.py https://walterra.dev -s "Include tech jokes and puns"
+doc2md-convo https://walterra.dev -s "Include tech jokes and puns"
 
 # Focus on specific aspects
-python3 doc2md-convo.py https://walterra.dev -s "Focus on the technical implementation details"
+doc2md-convo https://walterra.dev -s "Focus on the technical implementation details"
 ```
 
 ## Examples
 
 ```bash
 # Convert a blog post to podcast
-python3 doc2md-convo.py https://walterra.dev/blog/2025-05-16-html-to-image-rendering-server | python3 md-convo2mp3.py - -o node-html2img-render-server-podcast.mp3
+doc2md-convo https://walterra.dev/blog/2025-05-16-html-to-image-rendering-server | md-convo2mp3 - -o node-html2img-render-server-podcast.mp3
 
 # Convert local documentation to podcast
-python3 doc2md-convo.py README.md | python3 md-convo2mp3.py - -o readme-podcast.mp3
+doc2md-convo README.md | md-convo2mp3 - -o readme-podcast.mp3
 
 # Process a research paper PDF
-python3 doc2md-convo.py research-paper.pdf -s "Explain like teaching to graduate students" -o RESEARCH-CONVO.md
-python3 md-convo2mp3.py RESEARCH-CONVO.md -o research-podcast.mp3
+doc2md-convo research-paper.pdf -s "Explain like teaching to graduate students" -o RESEARCH-CONVO.md
+md-convo2mp3 RESEARCH-CONVO.md -o research-podcast.mp3
 
 # Create a funny tech news summary from URL
-python3 doc2md-convo.py https://techcrunch.com/2025/06/04/elon-musks-introduction-to-politics/ -s "Make it a roasting comedy show" -o ROAST-CONVO.md
-python3 md-convo2mp3.py ROAST-CONVO.md
+doc2md-convo https://techcrunch.com/2025/06/04/elon-musks-introduction-to-politics/ -s "Make it a roasting comedy show" -o ROAST-CONVO.md
+md-convo2mp3 ROAST-CONVO.md
 ```
 
 ## License
