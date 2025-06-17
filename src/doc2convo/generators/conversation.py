@@ -39,40 +39,56 @@ class ConversationGenerator:
         Returns:
             Generated conversation in markdown format
         """
-        if not system_prompt:
-            system_prompt = self._get_default_prompt()
+        # Always use the default system prompt
+        default_system_prompt = self._get_default_prompt()
         
-        # Randomize speaker assignment
+        # Randomize speaker assignment and roles
         speaker1, speaker2 = self._assign_speakers()
+        
+        # Randomize role assignment to avoid bias
+        if random.choice([True, False]):
+            speaker1_role = "more analytical and detail-oriented, acting as the subject matter expert"
+            speaker2_role = "more conversational, asking clarifying questions to help the audience understand"
+        else:
+            speaker1_role = "more conversational, asking clarifying questions to help the audience understand"
+            speaker2_role = "more analytical and detail-oriented, acting as the subject matter expert"
+        
+        # Add custom system prompt section if provided
+        system_prompt_section = ""
+        if system_prompt:
+            system_prompt_section = f"\n\nIMPORTANT: The following additional instructions should be considered with HIGH PRIORITY and can override any of the default requirements. The custom instructions take precedence over the defaults.\n\nBEGIN OF HIGH PRIORITY INSTRUCTIONS\n\n{system_prompt}\n\nEND OF HIGH PRIORITY INSTRUCTIONS\n\n"
         
         prompt = f"""Based on the following article, create a natural, engaging conversation between two people discussing its content.
 
+Key requirements:
+- Format as markdown with **SPEAKER:** prefix for each line
+- {speaker1} tends to be {speaker1_role}
+- {speaker2} tends to be {speaker2_role}
+- Include natural conversation elements like reactions, follow-up questions, and transitions
+- You must not use any code blocks or markdown formatting other than the **SPEAKER:** prefix
+- You must not use any markdown elements like *laughs* or *pauses*; instead, use natural dialogue
+- Make it feel like a real podcast discussion, not just reading facts
+- Keep it engaging and accessible
+- Length should be substantial but not excessive (aim for 15-25 exchanges)
+{system_prompt_section}
 Title: {title}
 URL: {url}
 
 Article Content:
-{content}
+{content[:8000]}
 
-Create a conversation between {speaker1} and {speaker2} discussing this article. Make it sound like a natural podcast discussion where they explore the key points, share insights, and occasionally add their own perspectives. Include:
-
-- A natural introduction mentioning the article title and what caught their attention
-- Discussion of the main points with genuine reactions
-- Questions and clarifications between the speakers
-- Some light analysis or speculation about implications
-- A brief wrap-up of key takeaways
+Create a conversation between {speaker1} and {speaker2} discussing this article. Make it sound like a natural podcast discussion where they explore the key points, share insights, and occasionally add their own perspectives.
 
 Format the conversation with:
 **{speaker1.upper()}:** [their dialogue]
-**{speaker2.upper()}:** [their dialogue]
-
-Make the conversation feel authentic, with natural speech patterns, occasional interruptions, and genuine interest in the topic."""
+**{speaker2.upper()}:** [their dialogue]"""
 
         try:
             response = self.client.messages.create(
-                model="claude-3-haiku-20240307",
+                model="claude-3-5-sonnet-20241022",
                 max_tokens=4000,
                 temperature=0.7,
-                system=system_prompt,
+                system=default_system_prompt,
                 messages=[{"role": "user", "content": prompt}]
             )
             
