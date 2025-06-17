@@ -1,5 +1,69 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "doc2convo"
+version = "0.1.0.dev0"
+description = "Convert documents and web content to conversational audio podcasts"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Walter M. Rafelsberger"}
+]
+maintainers = [
+    {name = "Walter M. Rafelsberger"}
+]
+keywords = ["tts", "podcast", "audio", "conversation", "ai", "claude"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Multimedia :: Sound/Audio :: Speech",
+    "Topic :: Text Processing :: Markup :: HTML",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "anthropic>=0.7.0",
+    "beautifulsoup4>=4.12.0",
+    "requests>=2.31.0",
+    "edge-tts>=6.1.0",
+    "pydub>=0.25.0",
+    "PyPDF2>=3.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "flake8>=6.0.0",
+    "mypy>=1.5.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/walterra/doc2convo"
+Repository = "https://github.com/walterra/doc2convo.git"
+"Bug Reports" = "https://github.com/walterra/doc2convo/issues"
+Changelog = "https://github.com/walterra/doc2convo/blob/main/CHANGELOG.md"
+
+[project.scripts]
+doc2convo = "doc2convo.cli.main:main"
+doc2md-convo = "doc2convo.cli.doc2md:main"
+md-convo2mp3 = "doc2convo.cli.md2mp3:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+doc2convo = ["py.typed"]
 
 [tool.black]
 line-length = 88
@@ -41,3 +105,9 @@ exclude = [
     "build",
     "dist"
 ]
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
