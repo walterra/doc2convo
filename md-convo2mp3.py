@@ -8,6 +8,8 @@ import glob
 import os
 import re
 import sys
+import tempfile
+from pathlib import Path
 
 import edge_tts
 from pydub import AudioSegment
@@ -52,35 +54,35 @@ async def generate_speech(text, voice, output_file):
 
 async def create_podcast(conversation, output_file="podcast.mp3"):
     """Create podcast with multiple voices"""
-    temp_files = []
+    # Use secure temporary directory that gets auto-cleaned
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_path = Path(temp_dir)
+        temp_files = []
 
-    # Generate individual audio files
-    for i, (speaker, text) in enumerate(conversation):
-        print(f"Generating audio for {speaker}: {text[:50]}...")
+        # Generate individual audio files
+        for i, (speaker, text) in enumerate(conversation):
+            print(f"Generating audio for {speaker}: {text[:50]}...")
 
-        voice = VOICES.get(speaker, VOICES["ALEX"])
-        temp_file = f"temp_{i}.mp3"
-        temp_files.append(temp_file)
+            voice = VOICES.get(speaker, VOICES["ALEX"])
+            temp_file = temp_path / f"temp_{i}.mp3"
+            temp_files.append(temp_file)
 
-        await generate_speech(text, voice, temp_file)
+            await generate_speech(text, voice, str(temp_file))
 
-    # Combine audio files
-    print("Combining audio files...")
-    combined = AudioSegment.empty()
+        # Combine audio files
+        print("Combining audio files...")
+        combined = AudioSegment.empty()
 
-    for temp_file in temp_files:
-        audio = AudioSegment.from_mp3(temp_file)
-        # Add small pause between lines
-        combined += audio  # + AudioSegment.silent(duration=1)
+        for temp_file in temp_files:
+            audio = AudioSegment.from_mp3(str(temp_file))
+            # Add small pause between lines
+            combined += audio  # + AudioSegment.silent(duration=1)
 
-    # Export final audio
-    combined.export(output_file, format="mp3")
+        # Export final audio
+        combined.export(output_file, format="mp3")
 
-    # Clean up temp files
-    for temp_file in temp_files:
-        os.remove(temp_file)
-
-    print(f"Podcast created: {output_file}")
+        print(f"Podcast created: {output_file}")
+        # Temporary directory and files are automatically cleaned up when context exits
 
 
 def select_conversation_file():
