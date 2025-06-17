@@ -118,8 +118,8 @@ The final podcast is saved as `podcast.mp3` or custom file name in the same dire
 ## Requirements
 
 - Python 3.7+
-- For edge-tts: Internet connection (uses Microsoft Edge's text-to-speech service)
-- For url2convo: Anthropic API key (set as environment variable)
+- For `doc2md-convo.py`: Anthropic API key (set as environment variable)
+- For `md-convo2mp3.py`: Internet connection (uses Microsoft Edge's text-to-speech service)
 
 ## Customization
 
