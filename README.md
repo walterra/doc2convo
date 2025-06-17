@@ -21,8 +21,6 @@ deactivate
 
 ### Installation
 
-#### Install as Package (Recommended)
-
 ```bash
 # Make sure your virtual environment is activated first
 pip install -e .
@@ -71,11 +69,8 @@ The project includes the `doc2md-convo` command which fetches web content or pro
 ### Quick Start Examples
 
 ```bash
-# Direct piping from URL to audio (after package installation)
+# Direct piping from URL to audio
 doc2md-convo https://walterra.dev | md-convo2mp3 - -o walterra-dev.mp3
-
-# Or using the legacy scripts directly
-python3 doc2md-convo.py https://walterra.dev | python3 md-convo2mp3.py - -o walterra-dev.mp3
 
 # From local text file
 doc2md-convo document.txt | md-convo2mp3 - -o document-podcast.mp3
