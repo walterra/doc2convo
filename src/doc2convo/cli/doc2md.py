@@ -72,16 +72,8 @@ def main():
                 f.write(conversation)
             print(f"Conversation saved to: {args.output}", file=sys.stderr)
         else:
-            # Auto-generate filename if input is from stdin
-            if not sys.stdout.isatty():
-                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                safe_title = sanitize_filename(title)
-                output_file = f"{safe_title}_{timestamp}-CONVO.md"
-                with open(output_file, 'w', encoding='utf-8') as f:
-                    f.write(conversation)
-                print(f"Conversation saved to: {output_file}", file=sys.stderr)
-            else:
-                print(conversation)
+            # Always print to stdout when no output file is specified
+            print(conversation)
         
         return 0
         
