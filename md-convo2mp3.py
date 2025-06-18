@@ -16,6 +16,11 @@ from pydub import AudioSegment
 
 # Try importing Orpheus TTS from local directory
 try:
+    # Add orpheus-tts-local directory to sys.path for direct import
+    orpheus_path = Path(__file__).parent / "orpheus-tts-local"
+    if orpheus_path.exists():
+        sys.path.insert(0, str(orpheus_path))
+    
     from gguf_orpheus import generate_speech_from_api, AVAILABLE_VOICES as ORPHEUS_AVAILABLE_VOICES
     ORPHEUS_AVAILABLE = True
 except ImportError:
