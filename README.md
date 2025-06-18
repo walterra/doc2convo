@@ -30,19 +30,6 @@ pip install -e ".[dev]"
 
 # Set your Anthropic API key (for doc2md-convo command)
 export ANTHROPIC_API_KEY='your-api-key-here'
-```
-
-#### Install from Requirements (Legacy)
-
-```bash
-# Make sure your virtual environment is activated first
-pip install -r requirements.txt
-
-# For development tools (optional)
-pip install -r requirements-dev.txt
-
-# Set your Anthropic API key (for doc2md-convo command)
-export ANTHROPIC_API_KEY='your-api-key-here'
 
 # For Orpheus TTS support (optional)
 python3 setup-orpheus.py
@@ -75,8 +62,8 @@ doc2md-convo https://walterra.dev | md-convo2mp3 - -o walterra-dev.mp3
 # From local text file
 doc2md-convo document.txt | md-convo2mp3 - -o document-podcast.mp3
 
-# From local text file with Orpheus TTS
-doc2md-convo document.txt | md-convo2mp3 - --tts-engine orpheus -o document-podcast.mp3
+# From local text file with Orpheus TTS (optimized prompt)
+doc2md-convo document.txt --tts-engine orpheus | md-convo2mp3 - --tts-engine orpheus -o document-podcast.mp3
 
 # From PDF file
 doc2md-convo report.pdf | md-convo2mp3 - -o report-podcast.mp3
@@ -84,8 +71,8 @@ doc2md-convo report.pdf | md-convo2mp3 - -o report-podcast.mp3
 # With custom style/personality
 doc2md-convo document.md -s "Make it humorous with tech jokes" | md-convo2mp3 -
 
-# Using Orpheus TTS with custom voices
-doc2md-convo article.md | md-convo2mp3 - --tts-engine orpheus --alex-voice zac --jordan-voice zoe
+# Using Orpheus TTS with custom voices (optimized prompt)
+doc2md-convo article.md --tts-engine orpheus | md-convo2mp3 - --tts-engine orpheus --alex-voice zac --jordan-voice zoe
 ```
 
 ### Step-by-Step Usage
@@ -111,7 +98,7 @@ doc2md-convo article.md | md-convo2mp3 - --tts-engine orpheus --alex-voice zac -
    # With custom system prompt
    doc2md-convo document.md -s "Make it humorous with tech jokes"
 
-   # Using Orpheus TTS (with emotional tags support)
+   # Using Orpheus TTS (generates conversation with emotional tags and shorter segments)
    doc2md-convo document.md --tts-engine orpheus -o DOCUMENT-CONVO.md
    ```
 
@@ -160,6 +147,7 @@ doc2md-convo article.md | md-convo2mp3 - --tts-engine orpheus --alex-voice zac -
 - **JORDAN**: Default is 'tara' (female voice)
 - Available voices: tara, leah, jess, leo, dan, mia, zac, zoe
 - Supports emotional tags: `<giggle>`, `<laugh>`, `<chuckle>`, `<sigh>`, `<cough>`, `<sniffle>`, `<groan>`, `<yawn>`, `<gasp>`
+- **⚠️ IMPORTANT**: Use `--tts-engine orpheus` with `doc2md-convo` to generate conversations optimized for Orpheus TTS (shorter dialogue segments and emotional tags)
 
 ## Output
 
@@ -231,6 +219,10 @@ md-convo2mp3 RESEARCH-CONVO.md -o research-podcast.mp3
 # Create a funny tech news summary from URL
 doc2md-convo https://techcrunch.com/2025/06/04/elon-musks-introduction-to-politics/ -s "Make it a roasting comedy show" -o ROAST-CONVO.md
 md-convo2mp3 ROAST-CONVO.md
+
+# Using Orpheus TTS with optimized conversation generation
+doc2md-convo research-paper.pdf --tts-engine orpheus -s "Include emotional reactions" -o RESEARCH-ORPHEUS-CONVO.md
+md-convo2mp3 RESEARCH-ORPHEUS-CONVO.md --tts-engine orpheus --alex-voice zac --jordan-voice tara
 ```
 
 ## License

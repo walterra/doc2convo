@@ -16,24 +16,51 @@ from pydub import AudioSegment
 
 from ..exceptions import TTSError
 
+# Try importing Orpheus TTS from local directory
+try:
+    # Add orpheus-tts-local directory to sys.path for direct import
+    orpheus_path = Path(__file__).parent.parent.parent / "orpheus-tts-local"
+    if orpheus_path.exists():
+        sys.path.insert(0, str(orpheus_path))
+    
+    from gguf_orpheus import generate_speech_from_api, AVAILABLE_VOICES as ORPHEUS_AVAILABLE_VOICES
+    ORPHEUS_AVAILABLE = True
+except ImportError:
+    ORPHEUS_AVAILABLE = False
+    ORPHEUS_AVAILABLE_VOICES = []
+
 
 class AudioConverter:
-    """Convert markdown conversations to audio using Edge TTS."""
+    """Convert markdown conversations to audio using Edge TTS or Orpheus TTS."""
     
-    # Default voice mapping
-    DEFAULT_VOICES = {
+    # Default voice mappings
+    DEFAULT_EDGE_VOICES = {
         'ALEX': 'en-US-ChristopherNeural',
         'JORDAN': 'en-US-JennyNeural'
     }
     
-    def __init__(self, voices: Dict[str, str] = None):
+    DEFAULT_ORPHEUS_VOICES = {
+        'ALEX': 'leo',
+        'JORDAN': 'tara'
+    }
+    
+    def __init__(self, tts_engine: str = "edge", voices: Dict[str, str] = None):
         """Initialize the audio converter.
         
         Args:
+            tts_engine: TTS engine to use ("edge" or "orpheus")
             voices: Optional custom voice mapping
         """
-        self.voices = voices or self.DEFAULT_VOICES
-        self.rate = "+25%"  # Speed up speech for more natural flow
+        self.tts_engine = tts_engine
+        
+        if tts_engine == "orpheus":
+            if not ORPHEUS_AVAILABLE:
+                raise TTSError("orpheus-tts-local is not available. Install with: python3 setup-orpheus.py")
+            self.voices = voices or self.DEFAULT_ORPHEUS_VOICES
+        else:
+            self.voices = voices or self.DEFAULT_EDGE_VOICES
+            
+        self.rate = "+25%"  # Speed up speech for more natural flow (Edge TTS only)
     
     async def convert_to_audio(self, conversation: str, output_path: str) -> None:
         """Convert conversation markdown to audio file.
@@ -87,7 +114,9 @@ class AudioConverter:
         tasks = []
         
         for i, (speaker, text) in enumerate(segments):
-            voice = self.voices.get(speaker.upper(), self.DEFAULT_VOICES['ALEX'])
+            default_voice = (self.DEFAULT_ORPHEUS_VOICES if self.tts_engine == "orpheus" 
+                           else self.DEFAULT_EDGE_VOICES)['ALEX']
+            voice = self.voices.get(speaker.upper(), default_voice)
             temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=f"_{i}.mp3")
             temp_file.close()
             
@@ -103,15 +132,49 @@ class AudioConverter:
         return audio_files
     
     async def _text_to_speech(self, text: str, voice: str, output_file: str) -> None:
-        """Convert text to speech using Edge TTS.
+        """Convert text to speech using the configured TTS engine.
         
         Args:
             text: Text to convert
             voice: Voice identifier
             output_file: Output file path
         """
+        if self.tts_engine == "orpheus":
+            await self._generate_speech_orpheus(text, voice, output_file)
+        else:
+            await self._generate_speech_edge(text, voice, output_file)
+    
+    async def _generate_speech_edge(self, text: str, voice: str, output_file: str) -> None:
+        """Generate speech using edge-tts."""
         communicate = edge_tts.Communicate(text, voice, rate=self.rate)
         await communicate.save(output_file)
+    
+    async def _generate_speech_orpheus(self, text: str, voice: str, output_file: str) -> None:
+        """Generate speech using orpheus-tts-local."""
+        if not ORPHEUS_AVAILABLE:
+            raise TTSError("orpheus-tts-local is not available. Install with: python3 setup-orpheus.py")
+
+        try:
+            # Generate audio segments
+            print(f"Generating audio using Orpheus TTS with voice '{voice}'", file=sys.stderr)
+            segments = generate_speech_from_api(text, voice=voice)
+
+            # Convert to AudioSegment and export as MP3
+            audio_data = b''.join(segments)
+            import numpy as np
+            # Convert bytes to int16 numpy array
+            audio_np = np.frombuffer(audio_data, dtype=np.int16)
+            # Convert to AudioSegment
+            audio_segment = AudioSegment(
+                audio_np.tobytes(),
+                frame_rate=24000,  # Orpheus sample rate
+                sample_width=2,    # 16-bit audio
+                channels=1         # Mono
+            )
+            # Export as MP3
+            audio_segment.export(output_file, format="mp3")
+        except Exception as e:
+            raise TTSError(f"Orpheus TTS generation failed: {e}")
     
     def _combine_audio_files(self, audio_files: List[str], output_path: str) -> None:
         """Combine audio segments with pauses.

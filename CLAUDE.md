@@ -65,7 +65,10 @@ doc2md-convo document.pdf -s "Make it humorous"
 md-convo2mp3 INPUT-CONVO.md -o output.mp3
 
 # Use Orpheus TTS (requires LM Studio running)
-md-convo2mp3 INPUT-CONVO.md --tts-engine orpheus -o output.mp3
+# First generate conversation optimized for Orpheus (shorter segments, emotional tags)
+doc2md-convo document.pdf --tts-engine orpheus -o OUTPUT-CONVO.md
+# Then convert to audio
+md-convo2mp3 OUTPUT-CONVO.md --tts-engine orpheus -o output.mp3
 
 # Direct piping workflow
 doc2md-convo URL | md-convo2mp3 - -o podcast.mp3

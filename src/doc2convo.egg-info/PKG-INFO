@@ -51,10 +51,10 @@ It's recommended to use a virtual environment to avoid conflicts with system Pyt
 
 ```bash
 # Create a virtual environment
-python3 -m venv convo-env
+python3 -m venv doc2convo-env
 
 # Activate the virtual environment
-source ./convo-env/bin/activate
+source ./doc2convo-env/bin/activate
 
 # When you're done, deactivate with:
 deactivate
@@ -71,6 +71,16 @@ pip install -e ".[dev]"
 
 # Set your Anthropic API key (for doc2md-convo command)
 export ANTHROPIC_API_KEY='your-api-key-here'
+
+# For Orpheus TTS support (optional)
+python3 setup-orpheus.py
+
+# To use Orpheus TTS:
+# 1. Run LM Studio with orpheus-3b-0.1-ft model (Q4_K_M quant)
+#    Model path: isaiahbjork/orpheus-3b-0.1-ft-Q4_K_M-GGUF
+# 2. Enable API server at http://127.0.0.1:1234
+# 3. The tools will automatically import from the local orpheus-tts-local directory
+# Note: This model requires about 2.5GB of RAM
 ```
 
 ## Complete Workflow: Web to Audio
@@ -93,11 +103,17 @@ doc2md-convo https://walterra.dev | md-convo2mp3 - -o walterra-dev.mp3
 # From local text file
 doc2md-convo document.txt | md-convo2mp3 - -o document-podcast.mp3
 
+# From local text file with Orpheus TTS
+doc2md-convo document.txt | md-convo2mp3 - --tts-engine orpheus -o document-podcast.mp3
+
 # From PDF file
 doc2md-convo report.pdf | md-convo2mp3 - -o report-podcast.mp3
 
 # With custom style/personality
 doc2md-convo document.md -s "Make it humorous with tech jokes" | md-convo2mp3 -
+
+# Using Orpheus TTS with custom voices
+doc2md-convo article.md | md-convo2mp3 - --tts-engine orpheus --alex-voice zac --jordan-voice zoe
 ```
 
 ### Step-by-Step Usage
@@ -122,6 +138,9 @@ doc2md-convo document.md -s "Make it humorous with tech jokes" | md-convo2mp3 -
 
    # With custom system prompt
    doc2md-convo document.md -s "Make it humorous with tech jokes"
+
+   # Using Orpheus TTS (with emotional tags support)
+   doc2md-convo document.md --tts-engine orpheus -o DOCUMENT-CONVO.md
    ```
 
 2. **Convert conversation to audio**
@@ -132,6 +151,15 @@ doc2md-convo document.md -s "Make it humorous with tech jokes" | md-convo2mp3 -
 
    # From stdin
    cat WALTERRA-DEV-CONVO.md | md-convo2mp3 - -o walterra-dev.mp3
+
+   # Interactive mode (prompts for file)
+   md-convo2mp3
+
+   # Using Orpheus TTS instead of edge-tts
+   md-convo2mp3 DOCUMENT-CONVO.md --tts-engine orpheus
+
+   # Custom voices with Orpheus TTS
+   md-convo2mp3 DOCUMENT-CONVO.md --tts-engine orpheus --alex-voice zac --jordan-voice zoe
 
    # See help for options
    md-convo2mp3 --help
@@ -149,8 +177,17 @@ doc2md-convo document.md -s "Make it humorous with tech jokes" | md-convo2mp3 -
 
 ## Voice Configuration
 
+### Edge TTS (Default)
+
 - **ALEX**: Male voice (Christopher in edge-tts)
 - **JORDAN**: Female voice (Jenny in edge-tts)
+
+### Orpheus TTS
+
+- **ALEX**: Default is 'leo' (male voice)
+- **JORDAN**: Default is 'tara' (female voice)
+- Available voices: tara, leah, jess, leo, dan, mia, zac, zoe
+- Supports emotional tags: `<giggle>`, `<laugh>`, `<chuckle>`, `<sigh>`, `<cough>`, `<sniffle>`, `<groan>`, `<yawn>`, `<gasp>`
 
 ## Output
 
@@ -160,13 +197,36 @@ The final podcast is saved as `podcast.mp3` or custom file name in the same dire
 
 - Python 3.7+
 - For `doc2md-convo.py`: Anthropic API key (set as environment variable)
-- For `md-convo2mp3.py`: Internet connection (uses Microsoft Edge's text-to-speech service)
+- For `md-convo2mp3.py` with Edge TTS: Internet connection (uses Microsoft Edge's text-to-speech service)
+- For `md-convo2mp3.py` with Orpheus TTS:
+  - **⚠️ IMPORTANT**: At least 2.5GB of RAM for the model
+  - LM Studio running with orpheus-3b-0.1-ft model (Q4_K_M quant) at model path: isaiahbjork/orpheus-3b-0.1-ft-Q4_K_M-GGUF
+  - API server enabled at http://127.0.0.1:1234
 
 ## Customization
 
 ### Voices
 
-You can modify the voices in `md-convo2mp3.py` by changing the voice names in the `VOICES` dictionary.
+#### Edge TTS
+
+You can modify the voices in `md-convo2mp3.py` by changing the voice names in the `EDGE_VOICES` dictionary.
+
+#### Orpheus TTS
+
+Specify custom voices using the command line arguments:
+
+```bash
+python3 md-convo2mp3.py conversation.md --tts-engine orpheus --alex-voice leo --jordan-voice tara
+```
+
+#### Emotional Tags (Orpheus TTS only)
+
+When using Orpheus TTS, you can include emotional tags in the conversation:
+
+```
+**ALEX:** That's <laugh> really interesting! I never thought about it that way.
+**JORDAN:** <sigh> I know, right? The implications are quite profound.
+```
 
 ### Conversation Style
 

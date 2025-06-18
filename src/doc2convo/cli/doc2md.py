@@ -41,6 +41,10 @@ def main():
     parser.add_argument('input', help='URL or local file path to convert')
     parser.add_argument('-o', '--output', help='Output file (default: auto-generated or stdout)')
     parser.add_argument('-s', '--system-prompt', help='Custom system prompt for conversation style')
+    parser.add_argument('--tts-engine', 
+                       choices=['edge', 'orpheus'], 
+                       default='edge',
+                       help='TTS engine to use (default: edge)')
     
     args = parser.parse_args()
     
@@ -85,7 +89,7 @@ def main():
         
         # Generate conversation
         generator = ConversationGenerator(api_key)
-        conversation = generator.generate(title, content, url, args.system_prompt)
+        conversation = generator.generate(title, content, url, args.system_prompt, args.tts_engine)
         
         if not conversation:
             status_print("Failed to generate conversation")
@@ -105,7 +109,10 @@ def main():
                 f.write(header + conversation)
             print(f"Conversation saved to: {args.output}")
             print("\nTo generate audio, run:")
-            print("md-convo2mp3")
+            if args.tts_engine == 'orpheus':
+                print(f"md-convo2mp3 {args.output} --tts-engine orpheus")
+            else:
+                print(f"md-convo2mp3 {args.output}")
             output_base = Path(args.output).stem
             if output_base.endswith('-CONVO'):
                 podcast_name = output_base[:-6] + '-podcast.mp3'

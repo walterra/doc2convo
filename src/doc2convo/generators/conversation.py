@@ -27,7 +27,8 @@ class ConversationGenerator:
             raise ConversionError(f"Failed to initialize Anthropic client: {e}")
     
     def generate(self, title: str, content: str, url: str, 
-                 system_prompt: Optional[str] = None) -> str:
+                 system_prompt: Optional[str] = None, 
+                 tts_engine: str = "edge") -> str:
         """Generate a conversation from the given content.
         
         Args:
@@ -35,6 +36,7 @@ class ConversationGenerator:
             content: Main content to convert
             url: Source URL
             system_prompt: Optional custom system prompt
+            tts_engine: TTS engine to use ("edge" or "orpheus")
             
         Returns:
             Generated conversation in markdown format
@@ -58,6 +60,22 @@ class ConversationGenerator:
         if system_prompt:
             system_prompt_section = f"\n\nIMPORTANT: The following additional instructions should be considered with HIGH PRIORITY and can override any of the default requirements. The custom instructions take precedence over the defaults.\n\nBEGIN OF HIGH PRIORITY INSTRUCTIONS\n\n{system_prompt}\n\nEND OF HIGH PRIORITY INSTRUCTIONS\n\n"
         
+        # Add Orpheus TTS-specific instructions if selected
+        orpheus_section = ""
+        if tts_engine == "orpheus":
+            orpheus_section = """
+
+Since you're using Orpheus TTS, you can include these special tags for more emotional voices:
+<giggle>, <laugh>, <chuckle>, <sigh>, <cough>, <sniffle>, <groan>, <yawn>, <gasp>
+
+Include these tags directly within spoken text to make the conversation more natural and emotive.
+For example: "**ALEX:** That's <laugh> really funny! I hadn't thought about it that way."
+
+Use these tags sparingly and naturally - don't overuse them. Only include them when they enhance the conversational flow.
+
+IMPORTANT: Orpheus TTS will create sound snippets no longer than 14 seconds, you must ensure that each line of dialogue is concise and fits within this limit.
+"""
+        
         prompt = f"""Based on the following article, create a natural, engaging conversation between two people discussing its content.
 
 Key requirements:
@@ -70,7 +88,7 @@ Key requirements:
 - Make it feel like a real podcast discussion, not just reading facts
 - Keep it engaging and accessible
 - Length should be substantial but not excessive (aim for 15-25 exchanges)
-{system_prompt_section}
+{system_prompt_section}{orpheus_section}
 Title: {title}
 URL: {url}
 
