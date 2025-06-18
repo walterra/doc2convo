@@ -11,5 +11,9 @@ PyPDF2>=3.0.0
 # Markdown parsing (legacy dependency)
 markdown==3.5.1
 
+# Dependencies for orpheus-tts integration (optional)
+# Install with: cd orpheus-tts-local && pip install -r requirements.txt
+# Note: Requires running LM Studio with API server enabled at http://127.0.0.1:1234
+
 # Development dependencies (optional)
 # Install with: pip install -r requirements-dev.txt

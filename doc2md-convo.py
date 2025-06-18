@@ -107,7 +107,7 @@ def fetch_url_content(url):
         return None, None
 
 
-def generate_conversation(title, content, source, system_prompt=None):
+def generate_conversation(title, content, source, system_prompt=None, tts_engine="edge"):
     """Generate conversational summary using Claude"""
 
     # Check for API key
@@ -126,6 +126,19 @@ def generate_conversation(title, content, source, system_prompt=None):
     system_prompt_section = ""
     if system_prompt:
         system_prompt_section = f"IMPORTANT: The following additional instructions should be considered with HIGH PRIORITY and can override any of the default requirements. The custom instructions take precedence over the defaults.\n\nBEGIN OF HIGH PRIORITY INSTRUCTIONS\n\n{system_prompt}\n\nEND OF HIGH PRIORITY INSTRUCTIONS\n\n"
+
+    # Add Orpheus TTS-specific instructions if selected
+    orpheus_section = ""
+    if tts_engine == "orpheus":
+        orpheus_section = """
+Since you're using Orpheus TTS, you can include these special tags for more emotional voices:
+<giggle>, <laugh>, <chuckle>, <sigh>, <cough>, <sniffle>, <groan>, <yawn>, <gasp>
+
+Include these tags directly within spoken text to make the conversation more natural and emotive.
+For example: "**ALEX:** That's <laugh> really funny! I hadn't thought about it that way."
+
+Use these tags sparingly and naturally - don't overuse them. Only include them when they enhance the conversational flow.
+"""
 
     # Randomize role assignment to avoid gender bias
     if random.choice([True, False]):
@@ -151,6 +164,7 @@ Key requirements:
 - Length should be substantial but not excessive (aim for 15-25 exchanges)
 
 {system_prompt_section}
+{orpheus_section}
 
 Source: {source}
 Title: {title}
@@ -164,6 +178,7 @@ Generate the podcast transcript:"""
         alex_role=alex_role,
         jordan_role=jordan_role,
         system_prompt_section=system_prompt_section,
+        orpheus_section=orpheus_section,
         source=source,
         title=title,
         content=content[:8000],
@@ -233,11 +248,20 @@ def main():
         "-s",
         help="Additional system prompt to influence the conversation style",
     )
+    parser.add_argument(
+        "--tts-engine",
+        choices=["edge", "orpheus"],
+        default="edge",
+        help="TTS engine to use (default: edge)",
+    )
 
     args = parser.parse_args()
 
     # Only print status messages to stderr when outputting to stdout
     output_to_stdout = args.output is None
+
+    # Get TTS engine
+    tts_engine = args.tts_engine
 
     def status_print(msg):
         if output_to_stdout:
@@ -263,7 +287,7 @@ def main():
     status_print(f"Content length: {len(content)} characters")
     status_print("Generating conversation with Claude...")
 
-    conversation = generate_conversation(title, content, args.source, args.system_prompt)
+    conversation = generate_conversation(title, content, args.source, args.system_prompt, tts_engine=tts_engine)
 
     if not conversation:
         status_print("Failed to generate conversation")
@@ -281,7 +305,10 @@ def main():
             f.write(header + conversation)
         print(f"Conversation saved to: {filename}")
         print("\nTo generate audio, run:")
-        print("python3 md-convo2mp3.py")
+        if args.tts_engine == "orpheus":
+            print(f"python3 md-convo2mp3.py {filename} --tts-engine orpheus")
+        else:
+            print(f"python3 md-convo2mp3.py {filename}")
         print(f"\nThis will create: {filename.replace('-CONVO.md', '-podcast.mp3')}")
     else:
         # Output to stdout for piping
