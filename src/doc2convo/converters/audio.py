@@ -111,8 +111,19 @@ class AudioConverter:
             List of temporary audio file paths
         """
         audio_files = []
-        tasks = []
         
+        # Create a semaphore to limit concurrent TTS requests to 1
+        semaphore = asyncio.Semaphore(1)
+        
+        async def limited_tts(speaker: str, text: str, voice: str, output_file: str):
+            """TTS with semaphore to limit concurrency."""
+            async with semaphore:
+                # Print progress like the original script
+                preview = text[:50] + "..." if len(text) > 50 else text
+                print(f"Generating audio for {speaker}: {preview}", file=sys.stderr)
+                await self._text_to_speech(text, voice, output_file)
+        
+        tasks = []
         for i, (speaker, text) in enumerate(segments):
             default_voice = (self.DEFAULT_ORPHEUS_VOICES if self.tts_engine == "orpheus" 
                            else self.DEFAULT_EDGE_VOICES)['ALEX']
@@ -120,11 +131,7 @@ class AudioConverter:
             temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=f"_{i}.mp3")
             temp_file.close()
             
-            # Print progress like the original script
-            preview = text[:50] + "..." if len(text) > 50 else text
-            print(f"Generating audio for {speaker}: {preview}", file=sys.stderr)
-            
-            task = self._text_to_speech(text, voice, temp_file.name)
+            task = limited_tts(speaker, text, voice, temp_file.name)
             tasks.append(task)
             audio_files.append(temp_file.name)
         
