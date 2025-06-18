@@ -2,8 +2,6 @@
 
 This project converts markdown-formatted conversations into audio podcasts with distinct voices for each speaker. It includes tools to generate conversations from web content and convert them to audio.
 
-Note: Clone this repository with `git clone --recursive` to include the orpheus-tts-local submodule. Or use `git submodule update --init --recursive` when the repo is already checked out.
-
 ## Setup
 
 ### Setting up a Virtual Environment (Recommended for macOS)
@@ -12,10 +10,10 @@ It's recommended to use a virtual environment to avoid conflicts with system Pyt
 
 ```bash
 # Create a virtual environment
-python3 -m venv convo-env
+python3 -m venv doc2convo-env
 
 # Activate the virtual environment
-source ./convo-env/bin/activate
+source ./doc2convo-env/bin/activate
 
 # When you're done, deactivate with:
 deactivate
@@ -34,12 +32,14 @@ pip install -r requirements-dev.txt
 export ANTHROPIC_API_KEY='your-api-key-here'
 
 # For Orpheus TTS support (optional)
-# 1. Install requirements
-cd orpheus-tts-local && pip install -r requirements.txt
+python3 setup-orpheus.py
 
-# 2. Run LM Studio with orpheus-3b-0.1-ft model (Q4_K_M quant) - model path: isaiahbjork/orpheus-3b-0.1-ft-Q4_K_M-GGUF
-#    and enable API server on http://127.0.0.1:1234
-#    Note: This model requires about 2.5GB of RAM
+# To use Orpheus TTS:
+# 1. Run LM Studio with orpheus-3b-0.1-ft model (Q4_K_M quant)
+#    Model path: isaiahbjork/orpheus-3b-0.1-ft-Q4_K_M-GGUF
+# 2. Enable API server at http://127.0.0.1:1234
+# 3. The tools will automatically import from the local orpheus-tts-local directory
+# Note: This model requires about 2.5GB of RAM
 ```
 
 ## Complete Workflow: Web to Audio
@@ -152,10 +152,9 @@ The final podcast is saved as `podcast.mp3` or custom file name in the same dire
 - For `doc2md-convo.py`: Anthropic API key (set as environment variable)
 - For `md-convo2mp3.py` with Edge TTS: Internet connection (uses Microsoft Edge's text-to-speech service)
 - For `md-convo2mp3.py` with Orpheus TTS:
+  - **⚠️ IMPORTANT**: At least 2.5GB of RAM for the model
   - LM Studio running with orpheus-3b-0.1-ft model (Q4_K_M quant) at model path: isaiahbjork/orpheus-3b-0.1-ft-Q4_K_M-GGUF
   - API server enabled at http://127.0.0.1:1234
-  - Requirements from orpheus-tts-local/requirements.txt
-  - At least 2.5GB of RAM for the model
 
 ## Customization
 

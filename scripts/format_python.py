@@ -37,7 +37,7 @@ def main():
         sys.exit(1)  # File doesn't exist
     
     workspace_root = Path(__file__).parent.parent
-    venv_python = workspace_root / "convo-env" / "bin" / "python"
+    venv_python = workspace_root / "doc2convo-env" / "bin" / "python"
     
     # Step 1: Add license header if missing
     header_cmd = f'"{venv_python}" scripts/add_license_header.py "{file_path}"'

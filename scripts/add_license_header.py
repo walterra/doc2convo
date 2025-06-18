@@ -63,17 +63,33 @@ def add_license_header(file_path):
         return False
 
 def find_python_files(directory='.'):
-    """Find all Python files in directory."""
-    python_files = []
-    for root, dirs, files in os.walk(directory):
-        # Skip virtual environments and other directories
-        dirs[:] = [d for d in dirs if d not in ['convo-env', '.git', '__pycache__', '.venv', 'node_modules']]
-        
-        for file in files:
-            if file.endswith('.py'):
-                python_files.append(os.path.join(root, file))
+    """Find all Python files that are tracked by git."""
+    import subprocess
     
-    return python_files
+    try:
+        # Get all git-tracked files
+        result = subprocess.run(['git', 'ls-files'], 
+                              capture_output=True, text=True, check=True)
+        git_files = result.stdout.strip().split('\n')
+        
+        # Filter for Python files
+        python_files = [f for f in git_files if f.endswith('.py')]
+        
+        return python_files
+        
+    except subprocess.CalledProcessError:
+        print("Warning: Not in a git repository or git command failed")
+        # Fallback to directory walking with exclusions
+        python_files = []
+        for root, dirs, files in os.walk(directory):
+            # Skip virtual environments and other directories
+            dirs[:] = [d for d in dirs if d not in ['doc2convo-env', '.git', '__pycache__', '.venv', 'node_modules']]
+            
+            for file in files:
+                if file.endswith('.py'):
+                    python_files.append(os.path.join(root, file))
+        
+        return python_files
 
 def main():
     parser = argparse.ArgumentParser(description='Add license headers to Python files')

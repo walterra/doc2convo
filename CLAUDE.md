@@ -14,8 +14,8 @@ doc2convo is a Python tool that converts web content and documents into conversa
 ### Setup Virtual Environment
 
 ```bash
-python3 -m venv convo-env
-source ./convo-env/bin/activate
+python3 -m venv doc2convo-env
+source ./doc2convo-env/bin/activate
 ```
 
 ### Install Dependencies
@@ -57,8 +57,11 @@ export ANTHROPIC_API_KEY='your-api-key-here'
 python3 doc2md-convo.py https://example.com -o OUTPUT-CONVO.md
 python3 doc2md-convo.py document.pdf -s "Make it humorous"
 
-# Convert to audio
+# Convert to audio (default: Edge TTS)
 python3 md-convo2mp3.py INPUT-CONVO.md -o output.mp3
+
+# Use Orpheus TTS (requires LM Studio running)
+python3 md-convo2mp3.py INPUT-CONVO.md --tts-engine orpheus -o output.mp3
 
 # Direct piping workflow
 python3 doc2md-convo.py URL | python3 md-convo2mp3.py - -o podcast.mp3
@@ -83,6 +86,7 @@ The project implements a pipeline: Content Source → AI Conversation → Neural
    - Implements async TTS generation with edge-tts
    - Combines audio segments with 300ms pauses between turns
    - Supports both file input and stdin for piping
+   - **Orpheus TTS Support**: Optional local TTS via LM Studio; exits with error message if LM Studio is not available when selected
 
 ### Key Implementation Details
 
@@ -98,3 +102,24 @@ The project implements a pipeline: Content Source → AI Conversation → Neural
 - `pyproject.toml` - Configures Black, isort, flake8, and mypy settings
 - Development issues tracked in `dev/ISSUE-*.md` files
 - No automated tests - manual verification required
+
+## TTS Engine Options
+
+### Edge TTS (Default)
+- Uses Microsoft Edge neural voices (ChristopherNeural, JennyNeural)
+- No setup required - works out of the box
+- Requires internet connectivity
+
+### Orpheus TTS (Local)
+- Uses local neural TTS via LM Studio
+- Requires setup: `python3 setup-orpheus.py`
+- Requires LM Studio API server running at http://127.0.0.1:1234
+- **Error Handling**: Script exits with clear error message if:
+  - Orpheus TTS is not installed when `--tts-engine orpheus` is used
+  - LM Studio API server is not running or unreachable
+- Default voices: ALEX → leo (male), JORDAN → tara (female)
+
+### Git
+
+- Use concise commit messages
+- Do not add author information to commit messages

@@ -1,5 +1,5 @@
 {
-    "python.defaultInterpreterPath": "./convo-env/bin/python",
+    "python.defaultInterpreterPath": "./doc2convo-env/bin/python",
     "editor.formatOnSave": true,
     "editor.formatOnPaste": true,
     "editor.codeActionsOnSave": {
@@ -16,7 +16,7 @@
         "commands": [
             {
                 "match": "\\.py$",
-                "cmd": "${workspaceFolder}/convo-env/bin/python ${workspaceFolder}/scripts/add_license_header.py ${file}"
+                "cmd": "${workspaceFolder}/doc2convo-env/bin/python ${workspaceFolder}/scripts/add_license_header.py ${file}"
             }
         ]
     },
@@ -29,6 +29,6 @@
         "**/node_modules": true,
         "**/__pycache__": true,
         "**/*.pyc": true,
-        "**/convo-env": true
+        "**/doc2convo-env": true
     }
 }

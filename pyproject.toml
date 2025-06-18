@@ -18,7 +18,7 @@ extend-exclude = '''
   | buck-out
   | build
   | dist
-  | convo-env
+  | doc2convo-env
 )/
 '''
 
@@ -37,7 +37,7 @@ exclude = [
     "*.egg-info",
     ".tox",
     ".venv",
-    "convo-env",
+    "doc2convo-env",
     "build",
     "dist"
 ]
