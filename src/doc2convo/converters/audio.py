@@ -91,6 +91,10 @@ class AudioConverter:
             temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=f"_{i}.mp3")
             temp_file.close()
             
+            # Print progress like the original script
+            preview = text[:50] + "..." if len(text) > 50 else text
+            print(f"Generating audio for {speaker}: {preview}", file=sys.stderr)
+            
             task = self._text_to_speech(text, voice, temp_file.name)
             tasks.append(task)
             audio_files.append(temp_file.name)
@@ -118,6 +122,8 @@ class AudioConverter:
         """
         combined = AudioSegment.empty()
         pause = AudioSegment.silent(duration=300)  # 300ms pause
+        
+        print("Combining audio files...", file=sys.stderr)
         
         try:
             for i, audio_file in enumerate(audio_files):

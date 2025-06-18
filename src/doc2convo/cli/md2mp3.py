@@ -23,7 +23,8 @@ def sanitize_filename(filename):
 def main():
     """Main entry point for md-convo2mp3 command."""
     parser = argparse.ArgumentParser(
-        description='Convert conversation markdown to audio using Edge TTS'
+        description='Convert conversation markdown to audio using Edge TTS',
+        epilog='Use "-" as input to read from stdin. Example: doc2md-convo URL | md-convo2mp3 - -o output.mp3'
     )
     parser.add_argument('input', help='Input markdown file (use - for stdin)')
     parser.add_argument('-o', '--output', help='Output audio file (default: auto-generated)')
@@ -35,10 +36,24 @@ def main():
         if args.input == '-':
             conversation = sys.stdin.read()
             input_name = "conversation"
+            print("Reading conversation from stdin...", file=sys.stderr)
         else:
+            if not Path(args.input).exists():
+                print(f"Error: Input file '{args.input}' not found!", file=sys.stderr)
+                return 1
             with open(args.input, 'r', encoding='utf-8') as f:
                 conversation = f.read()
             input_name = Path(args.input).stem
+            print(f"Reading conversation from file: {args.input}", file=sys.stderr)
+        
+        # Parse conversation to count dialogue lines
+        import re
+        dialogue_lines = re.findall(r'\*\*([A-Z]+):\*\* (.+)', conversation)
+        if not dialogue_lines:
+            print("No conversation found in input!", file=sys.stderr)
+            return 1
+        
+        print(f"Found {len(dialogue_lines)} lines of dialogue", file=sys.stderr)
         
         # Determine output file
         if args.output:
@@ -60,7 +75,7 @@ def main():
         print(f"Converting to audio: {output_file}", file=sys.stderr)
         converter.convert_to_audio_sync(conversation, output_file)
         
-        print(f"Audio saved to: {output_file}", file=sys.stderr)
+        print(f"Podcast created: {output_file}", file=sys.stderr)
         return 0
         
     except Doc2ConvoError as e:
