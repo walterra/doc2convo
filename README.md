@@ -2,6 +2,8 @@
 
 This project converts markdown-formatted conversations into audio podcasts with distinct voices for each speaker. It includes tools to generate conversations from web content and convert them to audio.
 
+<audio controls src="examples/README-x-files.mp3"></audio>
+
 ## Setup
 
 ### Setting up a Virtual Environment (Recommended for macOS)
