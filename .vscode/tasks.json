@@ -4,7 +4,7 @@
         {
             "label": "Add License Header",
             "type": "shell",
-            "command": "${workspaceFolder}/convo-env/bin/python",
+            "command": "${workspaceFolder}/doc2convo-env/bin/python",
             "args": ["scripts/add_license_header.py", "${file}"],
             "group": "build",
             "presentation": {

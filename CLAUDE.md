@@ -14,8 +14,8 @@ doc2convo is a Python tool that converts web content and documents into conversa
 ### Setup Virtual Environment
 
 ```bash
-python3 -m venv convo-env
-source ./convo-env/bin/activate
+python3 -m venv doc2convo-env
+source ./doc2convo-env/bin/activate
 ```
 
 ### Install Dependencies

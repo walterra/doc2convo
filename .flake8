@@ -7,6 +7,6 @@ exclude =
     *.egg-info,
     .tox,
     .venv,
-    convo-env,
+    doc2convo-env,
     build,
     dist
