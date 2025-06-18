@@ -5,3 +5,4 @@ __pycache__/
 *.pyc
 .venv/
 doc2convo-env/
+orpheus-tts-local/

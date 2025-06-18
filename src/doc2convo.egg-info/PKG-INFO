@@ -1,3 +1,44 @@
+Metadata-Version: 2.4
+Name: doc2convo
+Version: 0.1.0.dev0
+Summary: Convert documents and web content to conversational audio podcasts
+Author: Walter M. Rafelsberger
+Maintainer: Walter M. Rafelsberger
+License: MIT
+Project-URL: Homepage, https://github.com/walterra/doc2convo
+Project-URL: Repository, https://github.com/walterra/doc2convo.git
+Project-URL: Bug Reports, https://github.com/walterra/doc2convo/issues
+Project-URL: Changelog, https://github.com/walterra/doc2convo/blob/main/CHANGELOG.md
+Keywords: tts,podcast,audio,conversation,ai,claude
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: End Users/Desktop
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Topic :: Multimedia :: Sound/Audio :: Speech
+Classifier: Topic :: Text Processing :: Markup :: HTML
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: anthropic>=0.7.0
+Requires-Dist: beautifulsoup4>=4.12.0
+Requires-Dist: requests>=2.31.0
+Requires-Dist: edge-tts>=6.1.0
+Requires-Dist: pydub>=0.25.0
+Requires-Dist: PyPDF2>=3.0.0
+Provides-Extra: dev
+Requires-Dist: black>=23.0.0; extra == "dev"
+Requires-Dist: isort>=5.12.0; extra == "dev"
+Requires-Dist: flake8>=6.0.0; extra == "dev"
+Requires-Dist: mypy>=1.5.0; extra == "dev"
+Dynamic: license-file
+
 # doc2convo
 
 This project converts markdown-formatted conversations into audio podcasts with distinct voices for each speaker. It includes tools to generate conversations from web content and convert them to audio.
@@ -62,8 +103,8 @@ doc2md-convo https://walterra.dev | md-convo2mp3 - -o walterra-dev.mp3
 # From local text file
 doc2md-convo document.txt | md-convo2mp3 - -o document-podcast.mp3
 
-# From local text file with Orpheus TTS (optimized prompt)
-doc2md-convo document.txt --tts-engine orpheus | md-convo2mp3 - --tts-engine orpheus -o document-podcast.mp3
+# From local text file with Orpheus TTS
+doc2md-convo document.txt | md-convo2mp3 - --tts-engine orpheus -o document-podcast.mp3
 
 # From PDF file
 doc2md-convo report.pdf | md-convo2mp3 - -o report-podcast.mp3
@@ -71,8 +112,8 @@ doc2md-convo report.pdf | md-convo2mp3 - -o report-podcast.mp3
 # With custom style/personality
 doc2md-convo document.md -s "Make it humorous with tech jokes" | md-convo2mp3 -
 
-# Using Orpheus TTS with custom voices (optimized prompt)
-doc2md-convo article.md --tts-engine orpheus | md-convo2mp3 - --tts-engine orpheus --alex-voice zac --jordan-voice zoe
+# Using Orpheus TTS with custom voices
+doc2md-convo article.md | md-convo2mp3 - --tts-engine orpheus --alex-voice zac --jordan-voice zoe
 ```
 
 ### Step-by-Step Usage
@@ -98,7 +139,7 @@ doc2md-convo article.md --tts-engine orpheus | md-convo2mp3 - --tts-engine orphe
    # With custom system prompt
    doc2md-convo document.md -s "Make it humorous with tech jokes"
 
-   # Using Orpheus TTS (generates conversation with emotional tags and shorter segments)
+   # Using Orpheus TTS (with emotional tags support)
    doc2md-convo document.md --tts-engine orpheus -o DOCUMENT-CONVO.md
    ```
 
@@ -147,7 +188,6 @@ doc2md-convo article.md --tts-engine orpheus | md-convo2mp3 - --tts-engine orphe
 - **JORDAN**: Default is 'tara' (female voice)
 - Available voices: tara, leah, jess, leo, dan, mia, zac, zoe
 - Supports emotional tags: `<giggle>`, `<laugh>`, `<chuckle>`, `<sigh>`, `<cough>`, `<sniffle>`, `<groan>`, `<yawn>`, `<gasp>`
-- **⚠️ IMPORTANT**: Use `--tts-engine orpheus` with `doc2md-convo` to generate conversations optimized for Orpheus TTS (shorter dialogue segments and emotional tags)
 
 ## Output
 
@@ -219,10 +259,6 @@ md-convo2mp3 RESEARCH-CONVO.md -o research-podcast.mp3
 # Create a funny tech news summary from URL
 doc2md-convo https://techcrunch.com/2025/06/04/elon-musks-introduction-to-politics/ -s "Make it a roasting comedy show" -o ROAST-CONVO.md
 md-convo2mp3 ROAST-CONVO.md
-
-# Using Orpheus TTS with optimized conversation generation
-doc2md-convo research-paper.pdf --tts-engine orpheus -s "Include emotional reactions" -o RESEARCH-ORPHEUS-CONVO.md
-md-convo2mp3 RESEARCH-ORPHEUS-CONVO.md --tts-engine orpheus --alex-voice zac --jordan-voice tara
 ```
 
 ## License

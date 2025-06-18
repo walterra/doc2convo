@@ -1,0 +1,4 @@
+[console_scripts]
+doc2convo = doc2convo.cli.main:main
+doc2md-convo = doc2convo.cli.doc2md:main
+md-convo2mp3 = doc2convo.cli.md2mp3:main
