@@ -2,7 +2,6 @@
 
 This project converts markdown-formatted conversations into audio podcasts with distinct voices for each speaker. It includes tools to generate conversations from web content and convert them to audio.
 
-Note: Clone this repository with `git clone --recursive` to include the orpheus-tts-local submodule. Or use `git submodule update --init --recursive` when the repo is already checked out.
 
 ## Setup
 
@@ -33,13 +32,10 @@ pip install -r requirements-dev.txt
 # Set your Anthropic API key (for doc2md-convo.py)
 export ANTHROPIC_API_KEY='your-api-key-here'
 
-# For Orpheus TTS support (optional)
-# 1. Install requirements
-cd orpheus-tts-local && pip install -r requirements.txt
-
-# 2. Run LM Studio with orpheus-3b-0.1-ft model (Q4_K_M quant) - model path: isaiahbjork/orpheus-3b-0.1-ft-Q4_K_M-GGUF
-#    and enable API server on http://127.0.0.1:1234
-#    Note: This model requires about 2.5GB of RAM
+# For Orpheus TTS support (optional, already included in requirements.txt)
+# Run LM Studio with orpheus-3b-0.1-ft model (Q4_K_M quant) - model path: isaiahbjork/orpheus-3b-0.1-ft-Q4_K_M-GGUF
+# and enable API server on http://127.0.0.1:1234
+# Note: This model requires about 2.5GB of RAM
 ```
 
 ## Complete Workflow: Web to Audio
@@ -154,7 +150,6 @@ The final podcast is saved as `podcast.mp3` or custom file name in the same dire
 - For `md-convo2mp3.py` with Orpheus TTS:
   - LM Studio running with orpheus-3b-0.1-ft model (Q4_K_M quant) at model path: isaiahbjork/orpheus-3b-0.1-ft-Q4_K_M-GGUF
   - API server enabled at http://127.0.0.1:1234
-  - Requirements from orpheus-tts-local/requirements.txt
   - At least 2.5GB of RAM for the model
 
 ## Customization
