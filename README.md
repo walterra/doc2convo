@@ -2,7 +2,6 @@
 
 This project converts markdown-formatted conversations into audio podcasts with distinct voices for each speaker. It includes tools to generate conversations from web content and convert them to audio.
 
-
 ## Setup
 
 ### Setting up a Virtual Environment (Recommended for macOS)
@@ -11,10 +10,10 @@ It's recommended to use a virtual environment to avoid conflicts with system Pyt
 
 ```bash
 # Create a virtual environment
-python3 -m venv convo-env
+python3 -m venv doc2convo-env
 
 # Activate the virtual environment
-source ./convo-env/bin/activate
+source ./doc2convo-env/bin/activate
 
 # When you're done, deactivate with:
 deactivate
@@ -32,9 +31,14 @@ pip install -r requirements-dev.txt
 # Set your Anthropic API key (for doc2md-convo.py)
 export ANTHROPIC_API_KEY='your-api-key-here'
 
-# For Orpheus TTS support (optional, already included in requirements.txt)
-# Run LM Studio with orpheus-3b-0.1-ft model (Q4_K_M quant) - model path: isaiahbjork/orpheus-3b-0.1-ft-Q4_K_M-GGUF
-# and enable API server on http://127.0.0.1:1234
+# For Orpheus TTS support (optional)
+python3 setup-orpheus.py
+
+# To use Orpheus TTS:
+# 1. Run LM Studio with orpheus-3b-0.1-ft model (Q4_K_M quant)
+#    Model path: isaiahbjork/orpheus-3b-0.1-ft-Q4_K_M-GGUF
+# 2. Enable API server at http://127.0.0.1:1234
+# 3. Set PYTHONPATH: export PYTHONPATH="${PYTHONPATH}:$(pwd)/orpheus-tts-local"
 # Note: This model requires about 2.5GB of RAM
 ```
 

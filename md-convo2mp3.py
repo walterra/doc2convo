@@ -14,9 +14,9 @@ from pathlib import Path
 import edge_tts
 from pydub import AudioSegment
 
-# Try importing Orpheus TTS if installed
+# Try importing Orpheus TTS from local directory
 try:
-    from orpheus_tts_local.gguf_orpheus import generate_speech_from_api, AVAILABLE_VOICES as ORPHEUS_AVAILABLE_VOICES
+    from gguf_orpheus import generate_speech_from_api, AVAILABLE_VOICES as ORPHEUS_AVAILABLE_VOICES
     ORPHEUS_AVAILABLE = True
 except ImportError:
     ORPHEUS_AVAILABLE = False
@@ -70,7 +70,7 @@ async def generate_speech_orpheus(text, voice, output_file):
     """Generate speech using orpheus-tts-local"""
     if not ORPHEUS_AVAILABLE:
         print("Error: orpheus-tts-local is not available.")
-        print("Install with: pip install -r requirements.txt")
+        print("Install with: python3 setup-orpheus.py")
         sys.exit(1)
 
     try:
@@ -113,7 +113,7 @@ async def create_podcast(conversation, output_file="podcast.mp3", tts_engine="ed
     if tts_engine == "orpheus":
         if not ORPHEUS_AVAILABLE:
             print("Error: orpheus-tts-local is not available.")
-            print("Install with: pip install -r requirements.txt")
+            print("Install with: python3 setup-orpheus.py")
             sys.exit(1)
 
         voices = ORPHEUS_VOICES.copy()

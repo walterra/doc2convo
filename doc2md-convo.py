@@ -107,7 +107,7 @@ def fetch_url_content(url):
         return None, None
 
 
-def generate_conversation(title, content, source, system_prompt=None):
+def generate_conversation(title, content, source, system_prompt=None, tts_engine="edge"):
     """Generate conversational summary using Claude"""
 
     # Check for API key

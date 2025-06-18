@@ -13,7 +13,7 @@ markdown==3.5.1
 
 # Optional: Orpheus TTS for higher quality local TTS
 # Note: Requires LM Studio running with API server at http://127.0.0.1:1234
-git+https://github.com/llmOS/orpheus-tts-local.git@main#egg=orpheus-tts-local
+# To install Orpheus TTS support, run: python3 setup-orpheus.py
 
 # Development dependencies (optional)
 # Install with: pip install -r requirements-dev.txt

@@ -98,3 +98,8 @@ The project implements a pipeline: Content Source → AI Conversation → Neural
 - `pyproject.toml` - Configures Black, isort, flake8, and mypy settings
 - Development issues tracked in `dev/ISSUE-*.md` files
 - No automated tests - manual verification required
+
+### Git
+
+- Use concise commit messages
+- Do not add author information to commit messages
