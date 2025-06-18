@@ -2,7 +2,7 @@
 
 This project converts markdown-formatted conversations into audio podcasts with distinct voices for each speaker. It includes tools to generate conversations from web content and convert them to audio.
 
-Note: Clone this repository with `git clone --recursive` to include the orpheus-tts-local submodule.
+Note: Clone this repository with `git clone --recursive` to include the orpheus-tts-local submodule. Or use `git submodule update --init --recursive` when the repo is already checked out.
 
 ## Setup
 
@@ -69,7 +69,7 @@ python3 doc2md-convo.py report.pdf | python3 md-convo2mp3.py - -o report-podcast
 python3 doc2md-convo.py document.md -s "Make it humorous with tech jokes" | python3 md-convo2mp3.py -
 
 # Using Orpheus TTS with custom voices
-python3 doc2md-convo.py article.md --tts-engine orpheus | python3 md-convo2mp3.py - --tts-engine orpheus --alex-voice leo --jordan-voice tara
+python3 doc2md-convo.py article.md --tts-engine orpheus | python3 md-convo2mp3.py - --tts-engine orpheus --alex-voice zac --jordan-voice zoe
 ```
 
 ### Step-by-Step Usage
@@ -115,7 +115,7 @@ python3 doc2md-convo.py article.md --tts-engine orpheus | python3 md-convo2mp3.p
    python3 md-convo2mp3.py DOCUMENT-CONVO.md --tts-engine orpheus
 
    # Custom voices with Orpheus TTS
-   python3 md-convo2mp3.py DOCUMENT-CONVO.md --tts-engine orpheus --alex-voice leo --jordan-voice tara
+   python3 md-convo2mp3.py DOCUMENT-CONVO.md --tts-engine orpheus --alex-voice zac --jordan-voice zoe
    ```
 
 ## How it works
@@ -131,10 +131,12 @@ python3 doc2md-convo.py article.md --tts-engine orpheus | python3 md-convo2mp3.p
 ## Voice Configuration
 
 ### Edge TTS (Default)
+
 - **ALEX**: Male voice (Christopher in edge-tts)
 - **JORDAN**: Female voice (Jenny in edge-tts)
 
 ### Orpheus TTS
+
 - **ALEX**: Default is 'leo' (male voice)
 - **JORDAN**: Default is 'tara' (female voice)
 - Available voices: tara, leah, jess, leo, dan, mia, zac, zoe
@@ -160,16 +162,21 @@ The final podcast is saved as `podcast.mp3` or custom file name in the same dire
 ### Voices
 
 #### Edge TTS
+
 You can modify the voices in `md-convo2mp3.py` by changing the voice names in the `EDGE_VOICES` dictionary.
 
 #### Orpheus TTS
+
 Specify custom voices using the command line arguments:
+
 ```bash
 python3 md-convo2mp3.py conversation.md --tts-engine orpheus --alex-voice leo --jordan-voice tara
 ```
 
 #### Emotional Tags (Orpheus TTS only)
+
 When using Orpheus TTS, you can include emotional tags in the conversation:
+
 ```
 **ALEX:** That's <laugh> really interesting! I never thought about it that way.
 **JORDAN:** <sigh> I know, right? The implications are quite profound.

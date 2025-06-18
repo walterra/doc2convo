@@ -138,6 +138,8 @@ Include these tags directly within spoken text to make the conversation more nat
 For example: "**ALEX:** That's <laugh> really funny! I hadn't thought about it that way."
 
 Use these tags sparingly and naturally - don't overuse them. Only include them when they enhance the conversational flow.
+
+IMPORTANT: Orpheus TTS will create sounds snippets no longer than 14 seconds, you must ensure that each line of dialogue is concise and fits within this limit.
 """
 
     # Randomize role assignment to avoid gender bias
