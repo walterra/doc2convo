@@ -152,9 +152,9 @@ The final podcast is saved as `podcast.mp3` or custom file name in the same dire
 - For `doc2md-convo.py`: Anthropic API key (set as environment variable)
 - For `md-convo2mp3.py` with Edge TTS: Internet connection (uses Microsoft Edge's text-to-speech service)
 - For `md-convo2mp3.py` with Orpheus TTS:
+  - **⚠️ IMPORTANT**: At least 2.5GB of RAM for the model
   - LM Studio running with orpheus-3b-0.1-ft model (Q4_K_M quant) at model path: isaiahbjork/orpheus-3b-0.1-ft-Q4_K_M-GGUF
   - API server enabled at http://127.0.0.1:1234
-  - At least 2.5GB of RAM for the model
 
 ## Customization
 
